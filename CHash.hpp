@@ -1,186 +1,188 @@
-#ifndef	__CHASH_HPP__
-#define	__CHASH_HPP__
+ï»¿#ifndef	LIB_CHASH_HPP
+#define	LIB_CHASH_HPP
 
 #include	<string.h>
 #include	"CBucket.hpp"
 
-/**
- *	ƒnƒbƒVƒ…—pƒNƒ‰ƒX.
- *
- *	‰Û‘è
- *	ƒ`ƒFƒCƒ“–@‚ğÀ‘•‚·‚é
- *
- *	@author	Chiduru
- *	@version	0.01
- */
-template<class Ttype>
-class CHash{
-	public:
-		/**
-		 *	ƒfƒtƒHƒ‹ƒgƒRƒ“ƒXƒgƒ‰ƒNƒ^.
-		 *	ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚Ì‘å‚«‚³10‚Å‰Šú‰»B.
-		 *
-		 *	@since	0.01
-		 */
-		explicit CHash();
-		
-		/**
-		 *	ƒRƒ“ƒXƒgƒ‰ƒNƒ^.
-		 *	ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚Ì‘å‚«‚³‚ğw’è‚µ‚Ä‰Šú‰»B.
-		 *
-		 *	@since	0.01
-		 *	@param	hash_table_size	ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚Ì‘å‚«‚³
-		 */
-		explicit CHash(int hash_table_size);
-		
-		/**
-		 *	ƒfƒXƒgƒ‰ƒNƒ^.
-		 *
-		 *	@since	0.01
-		 */
-		~CHash();
-		
-		/**
-		 *	key‚É‘Î‰‚·‚éƒf[ƒ^‚ğ•Ô‚·.
-		 *
-		 *	@since	0.01
-		 *	@param	key	ƒnƒbƒVƒ…ƒL[
-		 *	@return	ƒf[ƒ^
-		 */
-		const Ttype& Get(const char* key) const;
-		
-		/**
-		 *	key‚É‘Î‰‚Ã‚¯‚Äƒf[ƒ^‚ğƒnƒbƒVƒ…ƒe[ƒuƒ‹‚ÉŠi”[.
-		 *
-		 *	@since	0.01
-		 *	@param	key		ƒnƒbƒVƒ…ƒL[
-		 *	@param	data	Ši”[‚·‚éƒf[ƒ^
-		 *	@return	Ši”[‚É¸”s‚µ‚½ê‡‚Ì‚İ0
-		 */
-		int Set(const char* key, const Ttype& data);
-		
-	private:
-		/**
-		 *	ƒnƒbƒVƒ…ŠÖ”.
-		 *	“n‚µ‚½ƒL[‚É‘Î‰‚µ‚½ƒnƒbƒVƒ…’l‚ğ¶¬‚µ‚Ä•Ô‚·B.
-		 *	ver0.01‚Å‚ÍAkey‚Å“n‚³‚ê‚½•¶š—ñ‚Ì•½‹Ï’l‚ğæ‚éB.
-		 *
-		 *	@since	0.01
-		 *	@param	key	ƒnƒbƒVƒ…ƒL[
-		 *	@return	¶¬‚³‚ê‚½ƒnƒbƒVƒ…’l
-		 */
-		int CalculationHash(const char* key) const;
-		
-		/**
-		 *	ƒfƒtƒHƒ‹ƒg‚ÌƒnƒbƒVƒ…ƒe[ƒuƒ‹ƒTƒCƒY.
-		 *
-		 *	@since	0.01
-		 */
-		static const int m_default_hash_table_size=	10;
-		
-		/**
-		 *	Šm•Û‚³‚ê‚½ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚ÌƒTƒCƒY.
-		 *
-		 *	@since	0.01
-		 */
-		int	m_hash_table_size;
-		
-		/**
-		 *	ƒnƒbƒVƒ…ƒe[ƒuƒ‹.
-		 *
-		 *	@since	0.01
-		 */
-		CBucket<Ttype>* m_hash_table;
-		
-};
+namespace Lib{
+	/**
+	 *	ãƒãƒƒã‚·ãƒ¥ç”¨ã‚¯ãƒ©ã‚¹.
+	 *
+	 *	èª²é¡Œ
+	 *	ãƒã‚§ã‚¤ãƒ³æ³•ã‚’å®Ÿè£…ã™ã‚‹
+	 *
+	 *	@author	Chiduru
+	 *	@version	0.01
+	 */
+	template<class Ttype>
+	class CHash{
+		public:
+			/**
+			 *	ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
+			 *	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®å¤§ãã•10ã§åˆæœŸåŒ–ã€‚.
+			 *
+			 *	@since	0.01
+			 */
+			explicit CHash();
+			
+			/**
+			 *	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
+			 *	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®å¤§ãã•ã‚’æŒ‡å®šã—ã¦åˆæœŸåŒ–ã€‚.
+			 *
+			 *	@since	0.01
+			 *	@param	hash_table_size	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®å¤§ãã•
+			 */
+			explicit CHash(int hash_table_size);
+			
+			/**
+			 *	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
+			 *
+			 *	@since	0.01
+			 */
+			~CHash();
+			
+			/**
+			 *	keyã«å¯¾å¿œã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™.
+			 *
+			 *	@since	0.01
+			 *	@param	key	ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼
+			 *	@return	ãƒ‡ãƒ¼ã‚¿
+			 */
+			const Ttype& Get(const char* key) const;
+			
+			/**
+			 *	keyã«å¯¾å¿œã¥ã‘ã¦ãƒ‡ãƒ¼ã‚¿ã‚’ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã«æ ¼ç´.
+			 *
+			 *	@since	0.01
+			 *	@param	key		ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼
+			 *	@param	data	æ ¼ç´ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
+			 *	@return	æ ¼ç´ã«å¤±æ•—ã—ãŸå ´åˆã®ã¿0
+			 */
+			int Set(const char* key, const Ttype& data);
+			
+		private:
+			/**
+			 *	ãƒãƒƒã‚·ãƒ¥é–¢æ•°.
+			 *	æ¸¡ã—ãŸã‚­ãƒ¼ã«å¯¾å¿œã—ãŸãƒãƒƒã‚·ãƒ¥å€¤ã‚’ç”Ÿæˆã—ã¦è¿”ã™ã€‚.
+			 *	ver0.01ã§ã¯ã€keyã§æ¸¡ã•ã‚ŒãŸæ–‡å­—åˆ—ã®å¹³å‡å€¤ã‚’å–ã‚‹ã€‚.
+			 *
+			 *	@since	0.01
+			 *	@param	key	ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼
+			 *	@return	ç”Ÿæˆã•ã‚ŒãŸãƒãƒƒã‚·ãƒ¥å€¤
+			 */
+			int CalculationHash(const char* key) const;
+			
+			/**
+			 *	ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã®ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã‚µã‚¤ã‚º.
+			 *
+			 *	@since	0.01
+			 */
+			static const int m_default_hash_table_size=	10;
+			
+			/**
+			 *	ç¢ºä¿ã•ã‚ŒãŸãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚µã‚¤ã‚º.
+			 *
+			 *	@since	0.01
+			 */
+			int	m_hash_table_size;
+			
+			/**
+			 *	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«.
+			 *
+			 *	@since	0.01
+			 */
+			CBucket<Ttype>* m_hash_table;
+			
+	};
 
-/**
- *	ƒfƒtƒHƒ‹ƒgƒRƒ“ƒXƒgƒ‰ƒNƒ^.
- *	ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚Ì‘å‚«‚³10‚Å‰Šú‰»B.
- *
- *	@since	0.01
- */
-template<class Ttype> CHash<Ttype>::CHash(){
-	m_hash_table=	new CBucket<Ttype>[m_default_hash_table_size];
-	
-	//	ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚ÌƒTƒCƒY‚ğ•Û‘¶
-	m_hash_table_size=	m_default_hash_table_size;
-}
-
-/**
- *	ƒRƒ“ƒXƒgƒ‰ƒNƒ^.
- *	ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚Ì‘å‚«‚³‚ğw’è‚µ‚Ä‰Šú‰»B.
- *
- *	@since	0.01
- *	@param	hash_table_size	ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚Ì‘å‚«‚³
- */
-template<class Ttype> CHash<Ttype>::CHash(int hash_table_size){
-	m_hash_table=	new CBucket<Ttype>[hash_table_size];
-	
-	//	ƒnƒbƒVƒ…ƒe[ƒuƒ‹‚ÌƒTƒCƒY‚ğ•Û‘¶
-	m_hash_table_size=	hash_table_size;
-}
-
-/**
- *	ƒfƒXƒgƒ‰ƒNƒ^.
- *
- *	@since	0.01
- */
-template<class Ttype> CHash<Ttype>::~CHash(){
-	delete [] m_hash_table;
-}
-
-/**
- *	key‚É‘Î‰‚·‚éƒf[ƒ^‚ğ•Ô‚·.
- *
- *	@since	0.01
- *	@param	key	ƒnƒbƒVƒ…ƒL[
- *	@return	ƒf[ƒ^
- */
-template<class Ttype> const Ttype& CHash<Ttype>::Get(const char* key) const{
-	int	index=	CalculationHash(key) % m_hash_table_size;
-	
-	return m_hash_table[index].GetData();
-}
-
-/**
- *	key‚É‘Î‰‚Ã‚¯‚Äƒf[ƒ^‚ğƒnƒbƒVƒ…ƒe[ƒuƒ‹‚ÉŠi”[.
- *
- *	@since	0.01
- *	@param	key		ƒnƒbƒVƒ…ƒL[
- *	@param	data	Ši”[‚·‚éƒf[ƒ^
- *	@return	Ši”[‚É¸”s‚µ‚½ê‡‚Ì‚İ0
- */
-template<class Ttype> int CHash<Ttype>::Set(const char* key, const Ttype& data){
-	int	index=	CalculationHash(key) % m_hash_table_size;
-	
-	m_hash_table[index].Set(key, data);
-	
-	return 1;
-}
-
-/**
- *	ƒnƒbƒVƒ…ŠÖ”.
- *	“n‚µ‚½ƒL[‚É‘Î‰‚µ‚½ƒnƒbƒVƒ…’l‚ğ¶¬‚µ‚Ä•Ô‚·B.
- *	ver0.01‚Å‚ÍAkey‚Å“n‚³‚ê‚½•¶š—ñ‚Ì•½‹Ï’l‚ğæ‚éB.
- *
- *	@since	0.01
- *	@param	key	ƒnƒbƒVƒ…ƒL[
- *	@return	¶¬‚³‚ê‚½ƒnƒbƒVƒ…’l
- */
-template<class Ttype> int CHash<Ttype>::CalculationHash(const char* key) const{
-	int	average=	0;
-	int	count=		0;
-	
-	while(*key){
-		average+=	static_cast<int>(*key);
-		++count;
-		++key;
+	/**
+	 *	ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
+	 *	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®å¤§ãã•10ã§åˆæœŸåŒ–ã€‚.
+	 *
+	 *	@since	0.01
+	 */
+	template<class Ttype> CHash<Ttype>::CHash(){
+		m_hash_table=	new CBucket<Ttype>[m_default_hash_table_size];
+		
+		//	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚µã‚¤ã‚ºã‚’ä¿å­˜
+		m_hash_table_size=	m_default_hash_table_size;
 	}
-	
-	average/=	count;
-	
-	return average;
+
+	/**
+	 *	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
+	 *	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®å¤§ãã•ã‚’æŒ‡å®šã—ã¦åˆæœŸåŒ–ã€‚.
+	 *
+	 *	@since	0.01
+	 *	@param	hash_table_size	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®å¤§ãã•
+	 */
+	template<class Ttype> CHash<Ttype>::CHash(int hash_table_size){
+		m_hash_table=	new CBucket<Ttype>[hash_table_size];
+		
+		//	ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã®ã‚µã‚¤ã‚ºã‚’ä¿å­˜
+		m_hash_table_size=	hash_table_size;
+	}
+
+	/**
+	 *	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
+	 *
+	 *	@since	0.01
+	 */
+	template<class Ttype> CHash<Ttype>::~CHash(){
+		delete [] m_hash_table;
+	}
+
+	/**
+	 *	keyã«å¯¾å¿œã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚’è¿”ã™.
+	 *
+	 *	@since	0.01
+	 *	@param	key	ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼
+	 *	@return	ãƒ‡ãƒ¼ã‚¿
+	 */
+	template<class Ttype> const Ttype& CHash<Ttype>::Get(const char* key) const{
+		int	index=	CalculationHash(key) % m_hash_table_size;
+		
+		return m_hash_table[index].GetData();
+	}
+
+	/**
+	 *	keyã«å¯¾å¿œã¥ã‘ã¦ãƒ‡ãƒ¼ã‚¿ã‚’ãƒãƒƒã‚·ãƒ¥ãƒ†ãƒ¼ãƒ–ãƒ«ã«æ ¼ç´.
+	 *
+	 *	@since	0.01
+	 *	@param	key		ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼
+	 *	@param	data	æ ¼ç´ã™ã‚‹ãƒ‡ãƒ¼ã‚¿
+	 *	@return	æ ¼ç´ã«å¤±æ•—ã—ãŸå ´åˆã®ã¿0
+	 */
+	template<class Ttype> int CHash<Ttype>::Set(const char* key, const Ttype& data){
+		int	index=	CalculationHash(key) % m_hash_table_size;
+		
+		m_hash_table[index].Set(key, data);
+		
+		return 1;
+	}
+
+	/**
+	 *	ãƒãƒƒã‚·ãƒ¥é–¢æ•°.
+	 *	æ¸¡ã—ãŸã‚­ãƒ¼ã«å¯¾å¿œã—ãŸãƒãƒƒã‚·ãƒ¥å€¤ã‚’ç”Ÿæˆã—ã¦è¿”ã™ã€‚.
+	 *	ver0.01ã§ã¯ã€keyã§æ¸¡ã•ã‚ŒãŸæ–‡å­—åˆ—ã®å¹³å‡å€¤ã‚’å–ã‚‹ã€‚.
+	 *
+	 *	@since	0.01
+	 *	@param	key	ãƒãƒƒã‚·ãƒ¥ã‚­ãƒ¼
+	 *	@return	ç”Ÿæˆã•ã‚ŒãŸãƒãƒƒã‚·ãƒ¥å€¤
+	 */
+	template<class Ttype> int CHash<Ttype>::CalculationHash(const char* key) const{
+		int	average=	0;
+		int	count=		0;
+		
+		while(*key){
+			average+=	static_cast<int>(*key);
+			++count;
+			++key;
+		}
+		
+		average/=	count;
+		
+		return average;
+	}
 }
 
-#endif	//	__CHASH_HPP__
+#endif	//	LIB_CHASH_HPP

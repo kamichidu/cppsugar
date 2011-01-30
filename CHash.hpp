@@ -1,21 +1,33 @@
 ﻿#ifndef	LIB_CHASH_HPP
 #define	LIB_CHASH_HPP
 
-#include	<string.h>
-#include	"CBucket.hpp"
+#include	<tchar.h>
+#include	<crtdbg.h>
 
 namespace Lib{
 	/**
 	 *	ハッシュ用クラス.
 	 *
-	 *	課題
-	 *	チェイン法を実装する
-	 *
 	 *	@author	Chiduru
-	 *	@version	0.01
+	 *	@version	0.02
 	 */
 	template<class Ttype>
 	class CHash{
+		private:
+			typedef	_TCHAR*			LPTSTR;
+			typedef	const _TCHAR*	LPCTSTR;
+			/**
+			 *	単方向リスト.
+			 *
+			 *	@since0.02
+			 */
+			struct CELL{
+				LPTSTR	key;
+				Ttype	value;
+				CELL*	next;
+			};
+			typedef	CELL*	LPCELL;
+			
 		public:
 			/**
 			 *	デフォルトコンストラクタ.
@@ -48,7 +60,7 @@ namespace Lib{
 			 *	@param	key	ハッシュキー
 			 *	@return	データ
 			 */
-			const Ttype& Get(const char* key) const;
+			const Ttype& Get(LPCTSTR key) const;
 			
 			/**
 			 *	keyに対応づけてデータをハッシュテーブルに格納.
@@ -58,7 +70,7 @@ namespace Lib{
 			 *	@param	data	格納するデータ
 			 *	@return	格納に失敗した場合のみ0
 			 */
-			int Set(const char* key, const Ttype& data);
+			int Set(LPCTSTR key, const Ttype& data);
 			
 		private:
 			/**
@@ -70,7 +82,7 @@ namespace Lib{
 			 *	@param	key	ハッシュキー
 			 *	@return	生成されたハッシュ値
 			 */
-			int CalculationHash(const char* key) const;
+			int CalculateHash(LPCTSTR key) const;
 			
 			/**
 			 *	デフォルトのハッシュテーブルサイズ.
@@ -91,7 +103,7 @@ namespace Lib{
 			 *
 			 *	@since	0.01
 			 */
-			CBucket<Ttype>* m_hash_table;
+			LPCELL* m_hash_table;
 			
 	};
 
@@ -99,63 +111,135 @@ namespace Lib{
 	 *	デフォルトコンストラクタ.
 	 *	ハッシュテーブルの大きさ10で初期化。.
 	 *
-	 *	@since	0.01
+	 *	@since	0.02
 	 */
 	template<class Ttype> CHash<Ttype>::CHash(){
-		m_hash_table=	new CBucket<Ttype>[m_default_hash_table_size];
+		m_hash_table=	new LPCELL[m_default_hash_table_size];
+		
+		for(int i= 0; i < m_default_hash_table_size; ++i)
+			m_hash_table[i]=	NULL;
 		
 		//	ハッシュテーブルのサイズを保存
 		m_hash_table_size=	m_default_hash_table_size;
 	}
-
+	
 	/**
 	 *	コンストラクタ.
 	 *	ハッシュテーブルの大きさを指定して初期化。.
 	 *
-	 *	@since	0.01
+	 *	@since	0.02
 	 *	@param	hash_table_size	ハッシュテーブルの大きさ
 	 */
 	template<class Ttype> CHash<Ttype>::CHash(int hash_table_size){
-		m_hash_table=	new CBucket<Ttype>[hash_table_size];
+		m_hash_table=	new LPCELL[hash_table_size];
+		
+		for(int i= 0; i < hash_table_size; ++i)
+			m_hash_table[i]=	NULL;
 		
 		//	ハッシュテーブルのサイズを保存
 		m_hash_table_size=	hash_table_size;
 	}
-
+	
 	/**
 	 *	デストラクタ.
 	 *
-	 *	@since	0.01
+	 *	解放忘れをチェック.
+	 *
+	 *	@since	0.02
 	 */
 	template<class Ttype> CHash<Ttype>::~CHash(){
+		//	メモリ領域を確保
+		LPCELL	next=		NULL;
+		LPCELL	free_ptr=	NULL;
+		
+		for(int i= 0; i < m_hash_table_size; ++i, next= NULL, free_ptr= NULL){
+			next=	m_hash_table[i];
+			
+			while(next){
+				free_ptr=	next;
+				next=		next->next;
+				
+//				delete [] free_ptr->key;
+				free(free_ptr->key);
+				free_ptr->key=	NULL;
+				delete free_ptr;
+				free_ptr=	NULL;
+			}
+			
+			m_hash_table[i]=	NULL;
+		}
+		
+		//	ポインタ用の領域を開放
 		delete [] m_hash_table;
 	}
-
+	
 	/**
 	 *	keyに対応するデータを返す.
 	 *
-	 *	@since	0.01
+	 *	課題、例外処理の追加.
+	 *
+	 *	@since	0.02
 	 *	@param	key	ハッシュキー
-	 *	@return	データ
+	 *	@return	keyに対応したデータ。見つからなければ0を返す。
 	 */
-	template<class Ttype> const Ttype& CHash<Ttype>::Get(const char* key) const{
-		int	index=	CalculationHash(key) % m_hash_table_size;
+	template<class Ttype> const Ttype& CHash<Ttype>::Get(LPCTSTR key) const{
+		int		index=	CalculateHash(key) % m_hash_table_size;
+		LPCELL	next=	NULL;
 		
-		return m_hash_table[index].GetData();
+		if(m_hash_table[index]){
+			next=	m_hash_table[index];
+			while(next){
+				if(!_tcscmp(next->key, key))
+					break;
+				next=	next->next;
+			}
+			
+			if(next)
+				return next->value;
+		}
+		
+		//	keyに対応するデータが見つからなかった場合、0を返す
+		return 0;
 	}
 
 	/**
 	 *	keyに対応づけてデータをハッシュテーブルに格納.
 	 *
-	 *	@since	0.01
+	 *	課題、例外処理の追加.
+	 *
+	 *	@since	0.02
 	 *	@param	key		ハッシュキー
 	 *	@param	data	格納するデータ
-	 *	@return	格納に失敗した場合のみ0
+	 *	@return	格納に失敗した場合のみ0、成功したら1
 	 */
-	template<class Ttype> int CHash<Ttype>::Set(const char* key, const Ttype& data){
-		int	index=	CalculationHash(key) % m_hash_table_size;
+	template<class Ttype> int CHash<Ttype>::Set(LPCTSTR key, const Ttype& data){
+		int		index=	CalculateHash(key) % m_hash_table_size;
+		LPCELL*	next=	NULL;
 		
-		m_hash_table[index].Set(key, data);
+		next=	&m_hash_table[index];
+		
+		while(*next){
+			if(!_tcscmp((*next)->key, key))
+				break;
+			
+			next=	&((*next)->next);
+		}
+		
+		if(*next)
+			(*next)->value=	data;
+		else{
+//			int	length=	_tcsclen(key) + 1;
+			
+			*next=	new CELL;
+			
+//			next->key=	new _TCHAR[length * sizeof(_TCHAR)];
+//			_tcscpy_s(next->key, length, key);
+			(*next)->key=	_tcsdup(key);
+			(*next)->value=	data;
+			(*next)->next=	NULL;
+			
+//			m_hash_table[index]=	next;
+		}
 		
 		return 1;
 	}
@@ -169,7 +253,7 @@ namespace Lib{
 	 *	@param	key	ハッシュキー
 	 *	@return	生成されたハッシュ値
 	 */
-	template<class Ttype> int CHash<Ttype>::CalculationHash(const char* key) const{
+	template<class Ttype> int CHash<Ttype>::CalculateHash(LPCTSTR key) const{
 		int	average=	0;
 		int	count=		0;
 		
@@ -179,7 +263,11 @@ namespace Lib{
 			++key;
 		}
 		
-		average/=	count;
+		if(count)
+			average/=	count;
+		
+		if(average < 0)
+			average=	-average;
 		
 		return average;
 	}

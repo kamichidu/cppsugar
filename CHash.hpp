@@ -8,8 +8,14 @@ namespace Lib{
 	/**
 	 *	ハッシュ用クラス.
 	 *
+	 *	文字列へのポインタをTtypeとして渡された時にバグが発現する。
+	 *		解決法　テンプレートの部分特殊化を使ってポインタ用の汎用クラスを定義
+	 *
+	 *	コピーコンストラクタが呼ばれた場合の挙動が未実装。
+	 *	
+	 *
 	 *	@author	Chiduru
-	 *	@version	0.02
+	 *	@version	0.03
 	 */
 	template<class Ttype>
 	class CHash{
@@ -19,7 +25,7 @@ namespace Lib{
 			/**
 			 *	単方向リスト.
 			 *
-			 *	@since0.02
+			 *	@since	0.02
 			 */
 			struct CELL{
 				LPTSTR	key;
@@ -28,10 +34,31 @@ namespace Lib{
 			};
 			typedef	CELL*	LPCELL;
 			
+			/**
+			 *	デフォルトのハッシュテーブルサイズ.
+			 *
+			 *	@since	0.01
+			 */
+			static const int m_default_hash_table_size=	64;
+			
+			/**
+			 *	確保されたハッシュテーブルのサイズ.
+			 *
+			 *	@since	0.01
+			 */
+			int	m_hash_table_size;
+			
+			/**
+			 *	ハッシュテーブル.
+			 *
+			 *	@since	0.01
+			 */
+			LPCELL* m_hash_table;
+			
 		public:
 			/**
 			 *	デフォルトコンストラクタ.
-			 *	ハッシュテーブルの大きさ10で初期化。.
+			 *	ハッシュテーブルの大きさm_default_hash_table_sizeで初期化。.
 			 *
 			 *	@since	0.01
 			 */
@@ -74,6 +101,26 @@ namespace Lib{
 			
 		private:
 			/**
+			 *	クラスの初期化.
+			 *
+			 *	コンストラクタからのみ呼ばれる。
+			 *
+			 *	@since	0.03
+			 *	@param	hash_table_size	ハッシュテーブルのサイズ
+			 */
+			int Initialize(int hash_table_size);
+			
+			/**
+			 *	渡されたkeyを持つCELLを検索.
+			 *	見つからなかった場合、NULLを返す.
+			 *
+			 *	@since	0.03
+			 *	@param	key	ハッシュキー
+			 *	@return	CELLが見つかった場合、見つかったCELLへのポインタ。見つからなかった場合、NULL
+			 */
+			LPCELL FindCell(LPCTSTR key) const;
+			
+			/**
 			 *	ハッシュ関数.
 			 *	渡したキーに対応したハッシュ値を生成して返す。.
 			 *	ver0.01では、keyで渡された文字列の平均値を取る。.
@@ -84,60 +131,53 @@ namespace Lib{
 			 */
 			int CalculateHash(LPCTSTR key) const;
 			
-			/**
-			 *	デフォルトのハッシュテーブルサイズ.
-			 *
-			 *	@since	0.01
-			 */
-			static const int m_default_hash_table_size=	10;
-			
-			/**
-			 *	確保されたハッシュテーブルのサイズ.
-			 *
-			 *	@since	0.01
-			 */
-			int	m_hash_table_size;
-			
-			/**
-			 *	ハッシュテーブル.
-			 *
-			 *	@since	0.01
-			 */
-			LPCELL* m_hash_table;
-			
 	};
 
 	/**
 	 *	デフォルトコンストラクタ.
-	 *	ハッシュテーブルの大きさ10で初期化。.
+	 *	ハッシュテーブルの大きさm_default_hash_table_sizeで初期化。.
 	 *
-	 *	@since	0.02
+	 *	@since	0.03
 	 */
-	template<class Ttype> CHash<Ttype>::CHash(){
-		m_hash_table=	new LPCELL[m_default_hash_table_size];
-		
-		for(int i= 0; i < m_default_hash_table_size; ++i)
-			m_hash_table[i]=	NULL;
-		
-		//	ハッシュテーブルのサイズを保存
-		m_hash_table_size=	m_default_hash_table_size;
+	template<class Ttype>
+	CHash<Ttype>::CHash(){
+		Initialize(m_default_hash_table_size);
 	}
 	
 	/**
 	 *	コンストラクタ.
 	 *	ハッシュテーブルの大きさを指定して初期化。.
 	 *
-	 *	@since	0.02
+	 *	@since	0.03
 	 *	@param	hash_table_size	ハッシュテーブルの大きさ
 	 */
-	template<class Ttype> CHash<Ttype>::CHash(int hash_table_size){
-		m_hash_table=	new LPCELL[hash_table_size];
-		
-		for(int i= 0; i < hash_table_size; ++i)
-			m_hash_table[i]=	NULL;
-		
-		//	ハッシュテーブルのサイズを保存
-		m_hash_table_size=	hash_table_size;
+	template<class Ttype>
+	CHash<Ttype>::CHash(int hash_table_size){
+		Initialize(hash_table_size);
+	}
+	
+	/**
+	 *	初期化関数.
+	 *	コンストラクタの処理をこの関数に委譲。
+	 *
+	 *	@return	初期化に成功すれば1、失敗なら0
+	 */
+	template<class Ttype>
+	int CHash<Ttype>::Initialize(int hash_table_size){
+		try{
+			m_hash_table=	new LPCELL[hash_table_size];
+			
+			for(int i= 0; i < hash_table_size; ++i)
+				m_hash_table[i]=	NULL;
+			
+			//	ハッシュテーブルのサイズを保存
+			m_hash_table_size=	hash_table_size;
+			
+			return 1;
+		}
+		catch(...){
+			return 0;
+		}
 	}
 	
 	/**
@@ -147,7 +187,8 @@ namespace Lib{
 	 *
 	 *	@since	0.02
 	 */
-	template<class Ttype> CHash<Ttype>::~CHash(){
+	template<class Ttype>
+	CHash<Ttype>::~CHash(){
 		//	メモリ領域を確保
 		LPCELL	next=		NULL;
 		LPCELL	free_ptr=	NULL;
@@ -175,31 +216,25 @@ namespace Lib{
 	
 	/**
 	 *	keyに対応するデータを返す.
-	 *
-	 *	課題、例外処理の追加.
+	 *	渡されたkeyが登録されていなければ、例外を発生させる.
 	 *
 	 *	@since	0.02
 	 *	@param	key	ハッシュキー
-	 *	@return	keyに対応したデータ。見つからなければ0を返す。
+	 *	@return	keyに対応したデータ
 	 */
-	template<class Ttype> const Ttype& CHash<Ttype>::Get(LPCTSTR key) const{
-		int		index=	CalculateHash(key) % m_hash_table_size;
-		LPCELL	next=	NULL;
+	template<class Ttype>
+	const Ttype& CHash<Ttype>::Get(LPCTSTR key) const{
+		LPCELL	cell=	FindCell(key);
 		
-		if(m_hash_table[index]){
-			next=	m_hash_table[index];
-			while(next){
-				if(!_tcscmp(next->key, key))
-					break;
-				next=	next->next;
-			}
+		if(cell)
+			return cell->value;
+		else{
+			std::basic_string<_TCHAR>	exception_message(_T("Use of unregistered key : "));
 			
-			if(next)
-				return next->value;
+			exception_message+=	key;
+			
+			throw exception_message.c_str();
 		}
-		
-		//	keyに対応するデータが見つからなかった場合、0を返す
-		return 0;
 	}
 
 	/**
@@ -207,41 +242,71 @@ namespace Lib{
 	 *
 	 *	課題、例外処理の追加.
 	 *
-	 *	@since	0.02
+	 *	@since	0.01
+	 *	@version	0.03
 	 *	@param	key		ハッシュキー
 	 *	@param	data	格納するデータ
 	 *	@return	格納に失敗した場合のみ0、成功したら1
 	 */
-	template<class Ttype> int CHash<Ttype>::Set(LPCTSTR key, const Ttype& data){
+	template<class Ttype>
+	int CHash<Ttype>::Set(LPCTSTR key, const Ttype& data){
+		try{
+			LPCELL	cell=	FindCell(key);
+			
+			if(cell){
+				cell->value=	data;
+			}
+			else{
+				int		index=	CalculateHash(key) % m_hash_table_size;
+				LPCELL*	last=	&m_hash_table[index];
+				
+				//	CELLの末尾を検索
+				while(*last)
+					last=	&((*last)->next);
+				
+				//	*lastがNULLでなければならない
+				_ASSERT(!(*last));
+				
+				//	CELLを追加
+				*last=			new CELL;
+				(*last)->key=	_tcsdup(key);
+				(*last)->value=	data;
+				(*last)->next=	NULL;
+			}
+			
+			return 1;
+		}
+		catch(...){
+			return 0;
+		}
+	}
+	
+	/**
+	 *	渡されたkeyを持つCELLを検索.
+	 *	見つからなかった場合、NULLを返す.
+	 *
+	 *	@since	0.03
+	 *	@param	key	ハッシュキー
+	 *	@return	CELLが見つかった場合、見つかったCELLへのポインタ。見つからなかった場合、NULL
+	 */
+	template<class Ttype>
+	typename CHash<Ttype>::LPCELL CHash<Ttype>::FindCell(LPCTSTR key) const{
 		int		index=	CalculateHash(key) % m_hash_table_size;
-		LPCELL*	next=	NULL;
+		LPCELL	p=		m_hash_table[index];
 		
-		next=	&m_hash_table[index];
-		
-		while(*next){
-			if(!_tcscmp((*next)->key, key))
+		//	p->keyとkeyが一致すればfalseとなり、ループを抜ける
+		//	pがNULLになればループを抜ける
+		while(p){
+			//	ループ先頭でpがNULLになるのはおかしい
+			_ASSERT(p);
+			
+			if(!_tcscmp(p->key, key))
 				break;
-			
-			next=	&((*next)->next);
+			else
+				p=	p->next;
 		}
 		
-		if(*next)
-			(*next)->value=	data;
-		else{
-//			int	length=	_tcsclen(key) + 1;
-			
-			*next=	new CELL;
-			
-//			next->key=	new _TCHAR[length * sizeof(_TCHAR)];
-//			_tcscpy_s(next->key, length, key);
-			(*next)->key=	_tcsdup(key);
-			(*next)->value=	data;
-			(*next)->next=	NULL;
-			
-//			m_hash_table[index]=	next;
-		}
-		
-		return 1;
+		return p;
 	}
 
 	/**
@@ -253,7 +318,8 @@ namespace Lib{
 	 *	@param	key	ハッシュキー
 	 *	@return	生成されたハッシュ値
 	 */
-	template<class Ttype> int CHash<Ttype>::CalculateHash(LPCTSTR key) const{
+	template<class Ttype>
+	int CHash<Ttype>::CalculateHash(LPCTSTR key) const{
 		int	average=	0;
 		int	count=		0;
 		

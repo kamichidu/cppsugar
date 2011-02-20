@@ -8,10 +8,10 @@ namespace Lib{
 	/**
 	 *	ハッシュ用クラス.
 	 *
-	 *	文字列へのポインタをTtypeとして渡された時にバグが発現する。
-	 *		解決法　テンプレートの部分特殊化を使ってポインタ用の汎用クラスを定義
+	 *	文字列へのポインタをTtypeとして渡された時にバグが発現する。.
+	 *		解決法　テンプレートの部分特殊化を使ってポインタ用の汎用クラスを定義.
 	 *
-	 *	コピーコンストラクタが呼ばれた場合の挙動が未実装。
+	 *	コピーコンストラクタが呼ばれた場合の挙動が未実装。.
 	 *	
 	 *
 	 *	@author	Chiduru
@@ -22,6 +22,7 @@ namespace Lib{
 		private:
 			typedef	_TCHAR*			LPTSTR;
 			typedef	const _TCHAR*	LPCTSTR;
+			
 			/**
 			 *	単方向リスト.
 			 *
@@ -56,79 +57,15 @@ namespace Lib{
 			LPCELL* m_hash_table;
 			
 		public:
-			/**
-			 *	デフォルトコンストラクタ.
-			 *	ハッシュテーブルの大きさm_default_hash_table_sizeで初期化。.
-			 *
-			 *	@since	0.01
-			 */
 			explicit CHash();
-			
-			/**
-			 *	コンストラクタ.
-			 *	ハッシュテーブルの大きさを指定して初期化。.
-			 *
-			 *	@since	0.01
-			 *	@param	hash_table_size	ハッシュテーブルの大きさ
-			 */
 			explicit CHash(int hash_table_size);
-			
-			/**
-			 *	デストラクタ.
-			 *
-			 *	@since	0.01
-			 */
 			~CHash();
-			
-			/**
-			 *	keyに対応するデータを返す.
-			 *
-			 *	@since	0.01
-			 *	@param	key	ハッシュキー
-			 *	@return	データ
-			 */
 			const Ttype& Get(LPCTSTR key) const;
-			
-			/**
-			 *	keyに対応づけてデータをハッシュテーブルに格納.
-			 *
-			 *	@since	0.01
-			 *	@param	key		ハッシュキー
-			 *	@param	data	格納するデータ
-			 *	@return	格納に失敗した場合のみ0
-			 */
 			int Set(LPCTSTR key, const Ttype& data);
 			
 		private:
-			/**
-			 *	クラスの初期化.
-			 *
-			 *	コンストラクタからのみ呼ばれる。
-			 *
-			 *	@since	0.03
-			 *	@param	hash_table_size	ハッシュテーブルのサイズ
-			 */
 			int Initialize(int hash_table_size);
-			
-			/**
-			 *	渡されたkeyを持つCELLを検索.
-			 *	見つからなかった場合、NULLを返す.
-			 *
-			 *	@since	0.03
-			 *	@param	key	ハッシュキー
-			 *	@return	CELLが見つかった場合、見つかったCELLへのポインタ。見つからなかった場合、NULL
-			 */
 			LPCELL FindCell(LPCTSTR key) const;
-			
-			/**
-			 *	ハッシュ関数.
-			 *	渡したキーに対応したハッシュ値を生成して返す。.
-			 *	ver0.01では、keyで渡された文字列の平均値を取る。.
-			 *
-			 *	@since	0.01
-			 *	@param	key	ハッシュキー
-			 *	@return	生成されたハッシュ値
-			 */
 			int CalculateHash(LPCTSTR key) const;
 			
 	};
@@ -137,7 +74,8 @@ namespace Lib{
 	 *	デフォルトコンストラクタ.
 	 *	ハッシュテーブルの大きさm_default_hash_table_sizeで初期化。.
 	 *
-	 *	@since	0.03
+	 *	@since	0.01
+	 *	@version	0.03
 	 */
 	template<class Ttype>
 	CHash<Ttype>::CHash(){
@@ -148,7 +86,8 @@ namespace Lib{
 	 *	コンストラクタ.
 	 *	ハッシュテーブルの大きさを指定して初期化。.
 	 *
-	 *	@since	0.03
+	 *	@since	0.01
+	 *	@version	0.03
 	 *	@param	hash_table_size	ハッシュテーブルの大きさ
 	 */
 	template<class Ttype>
@@ -160,6 +99,8 @@ namespace Lib{
 	 *	初期化関数.
 	 *	コンストラクタの処理をこの関数に委譲。
 	 *
+	 *	@since	0.02
+	 *	@version	0.01
 	 *	@return	初期化に成功すれば1、失敗なら0
 	 */
 	template<class Ttype>
@@ -185,7 +126,8 @@ namespace Lib{
 	 *
 	 *	解放忘れをチェック.
 	 *
-	 *	@since	0.02
+	 *	@since	0.01
+	 *	@version	0.02
 	 */
 	template<class Ttype>
 	CHash<Ttype>::~CHash(){
@@ -218,7 +160,8 @@ namespace Lib{
 	 *	keyに対応するデータを返す.
 	 *	渡されたkeyが登録されていなければ、例外を発生させる.
 	 *
-	 *	@since	0.02
+	 *	@since	0.01
+	 *	@version	0.02
 	 *	@param	key	ハッシュキー
 	 *	@return	keyに対応したデータ
 	 */
@@ -286,6 +229,7 @@ namespace Lib{
 	 *	見つからなかった場合、NULLを返す.
 	 *
 	 *	@since	0.03
+	 *	@version	0.01
 	 *	@param	key	ハッシュキー
 	 *	@return	CELLが見つかった場合、見つかったCELLへのポインタ。見つからなかった場合、NULL
 	 */
@@ -315,6 +259,7 @@ namespace Lib{
 	 *	ver0.01では、keyで渡された文字列の平均値を取る。.
 	 *
 	 *	@since	0.01
+	 *	@version	0.01
 	 *	@param	key	ハッシュキー
 	 *	@return	生成されたハッシュ値
 	 */

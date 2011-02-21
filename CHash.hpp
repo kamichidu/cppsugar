@@ -8,9 +8,6 @@ namespace Lib{
 	/**
 	 *	ハッシュ用クラス.
 	 *
-	 *	文字列へのポインタをTtypeとして渡された時にバグが発現する。.
-	 *		解決法　テンプレートの部分特殊化を使ってポインタ用の汎用クラスを定義.
-	 *
 	 *	コピーコンストラクタが呼ばれた場合の挙動が未実装。.
 	 *	
 	 *
@@ -22,6 +19,8 @@ namespace Lib{
 		private:
 			typedef	_TCHAR*			LPTSTR;
 			typedef	const _TCHAR*	LPCTSTR;
+			typedef	int				INT32;
+			typedef	long long		INT64;
 			
 			/**
 			 *	単方向リスト.
@@ -40,14 +39,14 @@ namespace Lib{
 			 *
 			 *	@since	0.01
 			 */
-			static const int m_default_hash_table_size=	64;
+			static const INT32 m_default_hash_table_size=	64;
 			
 			/**
 			 *	確保されたハッシュテーブルのサイズ.
 			 *
 			 *	@since	0.01
 			 */
-			int	m_hash_table_size;
+			INT32	m_hash_table_size;
 			
 			/**
 			 *	ハッシュテーブル.
@@ -58,15 +57,16 @@ namespace Lib{
 			
 		public:
 			explicit CHash();
-			explicit CHash(int hash_table_size);
+			explicit CHash(INT32 hash_table_size);
 			~CHash();
 			const Ttype& Get(LPCTSTR key) const;
-			int Set(LPCTSTR key, const Ttype& data);
+			void Set(LPCTSTR key, const Ttype& data);
 			
 		private:
-			int Initialize(int hash_table_size);
+			bool Initialize(INT32 hash_table_size);
 			LPCELL FindCell(LPCTSTR key) const;
-			int CalculateHash(LPCTSTR key) const;
+		public:
+			INT32 CalculateHash(LPCTSTR key) const;
 			
 	};
 
@@ -91,7 +91,7 @@ namespace Lib{
 	 *	@param	hash_table_size	ハッシュテーブルの大きさ
 	 */
 	template<class Ttype>
-	CHash<Ttype>::CHash(int hash_table_size){
+	CHash<Ttype>::CHash(INT32 hash_table_size){
 		Initialize(hash_table_size);
 	}
 	
@@ -104,20 +104,20 @@ namespace Lib{
 	 *	@return	初期化に成功すれば1、失敗なら0
 	 */
 	template<class Ttype>
-	int CHash<Ttype>::Initialize(int hash_table_size){
+	bool CHash<Ttype>::Initialize(INT32 hash_table_size){
 		try{
 			m_hash_table=	new LPCELL[hash_table_size];
 			
-			for(int i= 0; i < hash_table_size; ++i)
+			for(INT32 i= 0; i < hash_table_size; ++i)
 				m_hash_table[i]=	NULL;
 			
 			//	ハッシュテーブルのサイズを保存
 			m_hash_table_size=	hash_table_size;
 			
-			return 1;
+			return true;
 		}
 		catch(...){
-			return 0;
+			return false;
 		}
 	}
 	
@@ -127,7 +127,7 @@ namespace Lib{
 	 *	解放忘れをチェック.
 	 *
 	 *	@since	0.01
-	 *	@version	0.02
+	 *	@version	0.03
 	 */
 	template<class Ttype>
 	CHash<Ttype>::~CHash(){
@@ -135,7 +135,7 @@ namespace Lib{
 		LPCELL	next=		NULL;
 		LPCELL	free_ptr=	NULL;
 		
-		for(int i= 0; i < m_hash_table_size; ++i, next= NULL, free_ptr= NULL){
+		for(INT32 i= 0; i < m_hash_table_size; ++i, next= NULL, free_ptr= NULL){
 			next=	m_hash_table[i];
 			
 			while(next){
@@ -154,53 +154,63 @@ namespace Lib{
 		
 		//	ポインタ用の領域を開放
 		delete [] m_hash_table;
+		m_hash_table=	NULL;
 	}
 	
 	/**
 	 *	keyに対応するデータを返す.
-	 *	渡されたkeyが登録されていなければ、例外を発生させる.
+	 *
+	 *	例外条件:
+	 *		keyが存在しない。.
+	 *		keyがNULL。.
 	 *
 	 *	@since	0.01
-	 *	@version	0.02
+	 *	@version	0.03
 	 *	@param	key	ハッシュキー
 	 *	@return	keyに対応したデータ
 	 */
 	template<class Ttype>
 	const Ttype& CHash<Ttype>::Get(LPCTSTR key) const{
-		LPCELL	cell=	FindCell(key);
-		
-		if(cell)
-			return cell->value;
+		if(key){
+			LPCELL	cell=	FindCell(key);
+			
+			if(cell)
+				return cell->value;
+			else{
+				std::basic_string<_TCHAR>	message(_T("存在しないハッシュキーが使用されました。 : key == "));
+				message+=	key;
+				throw message.c_str();
+			}
+		}
 		else{
-			std::basic_string<_TCHAR>	exception_message(_T("Use of unregistered key : "));
-			
-			exception_message+=	key;
-			
-			throw exception_message.c_str();
+			std::wcerr << _T("NULLポインタが渡されました。") << std::endl;
+			throw message.c_str();
 		}
 	}
 
 	/**
 	 *	keyに対応づけてデータをハッシュテーブルに格納.
 	 *
-	 *	課題、例外処理の追加.
+	 *	デバッグモード時、key==NULLならばアサート。.
+	 *
+	 *	
 	 *
 	 *	@since	0.01
 	 *	@version	0.03
 	 *	@param	key		ハッシュキー
 	 *	@param	data	格納するデータ
-	 *	@return	格納に失敗した場合のみ0、成功したら1
 	 */
 	template<class Ttype>
-	int CHash<Ttype>::Set(LPCTSTR key, const Ttype& data){
+	void CHash<Ttype>::Set(LPCTSTR key, const Ttype& data){
 		try{
+			_ASSERT(key);
+			INT32	index=	CalculateHash(key) % m_hash_table_size;
 			LPCELL	cell=	FindCell(key);
 			
 			if(cell){
 				cell->value=	data;
 			}
 			else{
-				int		index=	CalculateHash(key) % m_hash_table_size;
 				LPCELL*	last=	&m_hash_table[index];
 				
 				//	CELLの末尾を検索
@@ -216,12 +226,10 @@ namespace Lib{
 				(*last)->value=	data;
 				(*last)->next=	NULL;
 			}
-			
-			return 1;
 		}
-		catch(...){
-			return 0;
-		}
+		catch(_TCHAR* e){ throw e; }
+		catch(std::bad_alloc& e){ throw e; }
+		catch(...){ throw; }
 	}
 	
 	/**
@@ -235,15 +243,12 @@ namespace Lib{
 	 */
 	template<class Ttype>
 	typename CHash<Ttype>::LPCELL CHash<Ttype>::FindCell(LPCTSTR key) const{
-		int		index=	CalculateHash(key) % m_hash_table_size;
+		INT32	index=	CalculateHash(key) % m_hash_table_size;
 		LPCELL	p=		m_hash_table[index];
 		
 		//	p->keyとkeyが一致すればfalseとなり、ループを抜ける
 		//	pがNULLになればループを抜ける
 		while(p){
-			//	ループ先頭でpがNULLになるのはおかしい
-			_ASSERT(p);
-			
 			if(!_tcscmp(p->key, key))
 				break;
 			else
@@ -257,30 +262,30 @@ namespace Lib{
 	 *	ハッシュ関数.
 	 *	渡したキーに対応したハッシュ値を生成して返す。.
 	 *	ver0.01では、keyで渡された文字列の平均値を取る。.
+	 *	ver0.02では、平方採中法。.
 	 *
 	 *	@since	0.01
-	 *	@version	0.01
+	 *	@version	0.02
 	 *	@param	key	ハッシュキー
 	 *	@return	生成されたハッシュ値
 	 */
 	template<class Ttype>
-	int CHash<Ttype>::CalculateHash(LPCTSTR key) const{
-		int	average=	0;
-		int	count=		0;
+	INT32 CHash<Ttype>::CalculateHash(LPCTSTR key) const{
+		_ASSERT(key);
+		INT64	sum=		0;
+		INT64	mask=		0xFFFFFFFF << 16;
+		INT32	hash_value=	0;
 		
 		while(*key){
-			average+=	static_cast<int>(*key);
-			++count;
+			sum+=	static_cast<INT64>(*key);
 			++key;
 		}
 		
-		if(count)
-			average/=	count;
+		hash_value=	static_cast<INT32>(((sum * sum) & mask) >> 16);
 		
-		if(average < 0)
-			average=	-average;
+		_ASSERT(hash_value >= 0);
 		
-		return average;
+		return hash_value;
 	}
 }
 

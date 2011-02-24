@@ -172,7 +172,7 @@ namespace Lib{
 	 *	@return	keyに対応したデータ
 	 */
 	template<class Ttype>
-	const Ttype& CHash<Ttype>::Get(LPCTSTR key) const{
+	inline const Ttype& CHash<Ttype>::Get(LPCTSTR key) const{
 		if(key){
 			LPCELL	cell=	FindCell(key);
 			
@@ -266,7 +266,7 @@ namespace Lib{
 	 *	@return	CELLが見つかった場合、見つかったCELLへのポインタ。見つからなかった場合、NULL
 	 */
 	template<class Ttype>
-	typename CHash<Ttype>::LPCELL CHash<Ttype>::FindCell(LPCTSTR key) const{
+	inline typename CHash<Ttype>::LPCELL CHash<Ttype>::FindCell(LPCTSTR key) const{
 		INT32	index=	CalculateHash(key) % m_hash_table_size;
 		LPCELL	p=		m_hash_table[index];
 		
@@ -294,7 +294,7 @@ namespace Lib{
 	 *	@return	生成されたハッシュ値
 	 */
 	template<class Ttype>
-	INT32 CHash<Ttype>::CalculateHash(LPCTSTR key) const{
+	inline INT32 CHash<Ttype>::CalculateHash(LPCTSTR key) const{
 		_ASSERT(key);
 		INT64	sum=		0;
 		INT64	mask=		0xFFFFFFFF << 16;

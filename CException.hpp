@@ -8,6 +8,8 @@ namespace Lib{
 	/**
 	 *	_TCHARで文字列を扱う基底例外クラス。.
 	 *
+	 *	_tcsdup()がNULLを返したときの処理をどうするか。
+	 *
 	 *	@author	Chiduru
 	 *	@version	0.01
 	 */
@@ -35,7 +37,7 @@ namespace Lib{
 	 *	@version	0.01
 	 */
 	inline CException::CException(){
-		m_what=	_tcsdup(_T("Unknown exception"));
+		m_what=	_tcsdup(_T("Unknonw exception."));
 	}
 	
 	/**
@@ -46,8 +48,21 @@ namespace Lib{
 	 *	@param	message	例外メッセージ
 	 */
 	inline CException::CException(LPCTSTR message){
-		_ASSERT(message);
-		m_what=	_tcsdup(message);
+		if(message != _T('\0'))
+			m_what=	_tcsdup(message);
+		else
+			m_what=	_tcsdup(_T("Unknown exception."));
+	}
+	
+	/**
+	 *	引数つきコンストラクタ。.
+	 *
+	 *	@since	0.01
+	 *	@version	0.01
+	 *	@param	CException	被コピー例外クラス
+	 */
+	inline CException::CException(const CException& e){
+		m_what=	_tcsdup(e.What());
 	}
 	
 	/**
@@ -81,8 +96,10 @@ namespace Lib{
 	 *	@return	自分自身
 	 */
 	inline CException& CException::operator=(const CException& e){
-		free(m_what);
-		m_what=	_tcsdup(e.What());
+		if(this != &e){
+			free(m_what);
+			m_what=	_tcsdup(e.What());
+		}
 		return *this;
 	}
 }

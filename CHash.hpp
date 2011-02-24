@@ -1,6 +1,7 @@
 ﻿#ifndef	LIB_CHASH_HPP
 #define	LIB_CHASH_HPP
 
+#include	"CException.hpp"
 #include	<tchar.h>
 #include	<crtdbg.h>
 
@@ -61,6 +62,7 @@ namespace Lib{
 			~CHash();
 			const Ttype& Get(LPCTSTR key) const;
 			void Set(LPCTSTR key, const Ttype& data);
+			const Ttype& operator [] (LPCTSTR key) const;
 			
 		private:
 			bool Initialize(INT32 hash_table_size);
@@ -78,7 +80,7 @@ namespace Lib{
 	 *	@version	0.03
 	 */
 	template<class Ttype>
-	CHash<Ttype>::CHash(){
+	inline CHash<Ttype>::CHash(){
 		Initialize(m_default_hash_table_size);
 	}
 	
@@ -91,7 +93,7 @@ namespace Lib{
 	 *	@param	hash_table_size	ハッシュテーブルの大きさ
 	 */
 	template<class Ttype>
-	CHash<Ttype>::CHash(INT32 hash_table_size){
+	inline CHash<Ttype>::CHash(INT32 hash_table_size){
 		Initialize(hash_table_size);
 	}
 	
@@ -104,7 +106,7 @@ namespace Lib{
 	 *	@return	初期化に成功すれば1、失敗なら0
 	 */
 	template<class Ttype>
-	bool CHash<Ttype>::Initialize(INT32 hash_table_size){
+	inline bool CHash<Ttype>::Initialize(INT32 hash_table_size){
 		try{
 			m_hash_table=	new LPCELL[hash_table_size];
 			
@@ -183,8 +185,30 @@ namespace Lib{
 			}
 		}
 		else{
-			std::wcerr << _T("NULLポインタが渡されました。") << std::endl;
+			std::basic_string<_TCHAR>	message(_T("NULLポインタが渡されました。"));
 			throw message.c_str();
+		}
+	}
+	
+	/**
+	 *	keyに対応するデータを返す。.
+	 *
+	 *	例外条件:.
+	 *		keyが存在しない。.
+	 *		keyがNULL。.
+	 *
+	 *	@since	0.03
+	 *	@version	0.01
+	 *	@param	key	ハッシュキー
+	 *	@return keyに対応したデータ
+	 */
+	template<class Ttype>
+	inline const Ttype& CHash<Ttype>::operator [] (LPCTSTR key) const{
+		try{
+			return Get(key);
+		}
+		catch(_TCHAR* e){
+			throw e;
 		}
 	}
 

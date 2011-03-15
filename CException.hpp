@@ -8,10 +8,11 @@ namespace Lib{
 	/**
 	 *	_TCHARで文字列を扱う基底例外クラス。.
 	 *
+	 *	課題
 	 *	_tcsdup()がNULLを返したときの処理をどうするか。
 	 *
 	 *	@author	Chiduru
-	 *	@version	0.01
+	 *	@version	0.02
 	 */
 	class CException{
 		private:
@@ -22,6 +23,7 @@ namespace Lib{
 			explicit CException();
 			explicit CException(LPCTSTR message);
 			explicit CException(const CException& e);
+			explicit CException(const std::basic_string<_TCHAR>& s);
 			~CException();
 			LPCTSTR What() const;
 			CException& operator=(const CException& e);
@@ -63,6 +65,17 @@ namespace Lib{
 	 */
 	inline CException::CException(const CException& e){
 		m_what=	_tcsdup(e.What());
+	}
+	
+	/**
+	 *	引数つきコンストラクタ.
+	 *
+	 *	@since	0.02
+	 *	@version	0.01
+	 *	@param	s	例外メッセージ
+	 */
+	inline CException::CException(const std::basic_string<_TCHAR>& s){
+		m_what=	_tcsdup(s.c_str());
 	}
 	
 	/**

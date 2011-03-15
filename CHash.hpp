@@ -1,19 +1,20 @@
 ﻿#ifndef	LIB_CHASH_HPP
 #define	LIB_CHASH_HPP
 
-#include	"CException.hpp"
 #include	<tchar.h>
 #include	<crtdbg.h>
+#include	"CException.hpp"
 
 namespace Lib{
 	/**
-	 *	ハッシュ用クラス.
+	 *	連想配列(ハッシュ)用クラス.
 	 *
+	 *	課題
 	 *	コピーコンストラクタが呼ばれた場合の挙動が未実装。.
 	 *	
 	 *
 	 *	@author	Chiduru
-	 *	@version	0.03
+	 *	@version	0.04
 	 */
 	template<class Ttype>
 	class CHash{
@@ -57,7 +58,6 @@ namespace Lib{
 			LPCELL* m_hash_table;
 			
 		public:
-			explicit CHash();
 			explicit CHash(INT32 hash_table_size);
 			~CHash();
 			const Ttype& Get(LPCTSTR key) const;
@@ -65,7 +65,6 @@ namespace Lib{
 			const Ttype& operator [] (LPCTSTR key) const;
 			
 		private:
-			bool Initialize(INT32 hash_table_size);
 			LPCELL FindCell(LPCTSTR key) const;
 		public:
 			INT32 CalculateHash(LPCTSTR key) const;
@@ -73,40 +72,15 @@ namespace Lib{
 	};
 
 	/**
-	 *	デフォルトコンストラクタ.
-	 *	ハッシュテーブルの大きさm_default_hash_table_sizeで初期化。.
-	 *
-	 *	@since	0.01
-	 *	@version	0.03
-	 */
-	template<class Ttype>
-	inline CHash<Ttype>::CHash(){
-		Initialize(m_default_hash_table_size);
-	}
-	
-	/**
 	 *	コンストラクタ.
 	 *	ハッシュテーブルの大きさを指定して初期化。.
 	 *
 	 *	@since	0.01
-	 *	@version	0.03
+	 *	@version	0.04
 	 *	@param	hash_table_size	ハッシュテーブルの大きさ
 	 */
 	template<class Ttype>
-	inline CHash<Ttype>::CHash(INT32 hash_table_size){
-		Initialize(hash_table_size);
-	}
-	
-	/**
-	 *	初期化関数.
-	 *	コンストラクタの処理をこの関数に委譲。
-	 *
-	 *	@since	0.02
-	 *	@version	0.01
-	 *	@return	初期化に成功すれば1、失敗なら0
-	 */
-	template<class Ttype>
-	inline bool CHash<Ttype>::Initialize(INT32 hash_table_size){
+	inline CHash<Ttype>::CHash(INT32 hash_table_size= m_default_hash_table_size){
 		try{
 			m_hash_table=	new LPCELL[hash_table_size];
 			
@@ -115,11 +89,12 @@ namespace Lib{
 			
 			//	ハッシュテーブルのサイズを保存
 			m_hash_table_size=	hash_table_size;
-			
-			return true;
+		}
+		catch(std::bad_alloc& e){
+			throw CException(_T("メモリの確保に失敗。"));
 		}
 		catch(...){
-			return false;
+			throw CException;
 		}
 	}
 	
@@ -181,12 +156,11 @@ namespace Lib{
 			else{
 				std::basic_string<_TCHAR>	message(_T("存在しないハッシュキーが使用されました。 : key == "));
 				message+=	key;
-				throw message.c_str();
+				throw CException(message);
 			}
 		}
 		else{
-			std::basic_string<_TCHAR>	message(_T("NULLポインタが渡されました。"));
-			throw message.c_str();
+			throw CException(_T("NULLポインタが渡されました。"));
 		}
 	}
 	
@@ -207,7 +181,7 @@ namespace Lib{
 		try{
 			return Get(key);
 		}
-		catch(_TCHAR* e){
+		catch(CException& e){
 			throw e;
 		}
 	}
@@ -251,8 +225,8 @@ namespace Lib{
 				(*last)->next=	NULL;
 			}
 		}
-		catch(_TCHAR* e){ throw e; }
-		catch(std::bad_alloc& e){ throw e; }
+		catch(std::bad_alloc& e){ throw CException(_T("メモリ確保に失敗。")); }
+		catch(CException& e){ throw e; }
 		catch(...){ throw; }
 	}
 	

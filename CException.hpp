@@ -1,6 +1,7 @@
 ﻿#ifndef	LIB_CEXCEPTION_HPP
 #define	LIB_CEXCEPTION_HPP
 
+#include	<iostream>
 #include	<tchar.h>
 #include	<crtdbg.h>
 
@@ -15,21 +16,17 @@ namespace Lib{
 	 *	@version	0.02
 	 */
 	class CException{
-		private:
-			typedef	_TCHAR*			LPTSTR;
-			typedef	const _TCHAR*	LPCTSTR;
-			
 		public:
 			explicit CException();
-			explicit CException(LPCTSTR message);
+			explicit CException(const _TCHAR* message);
 			explicit CException(const CException& e);
 			explicit CException(const std::basic_string<_TCHAR>& s);
 			~CException();
-			LPCTSTR What() const;
+			const _TCHAR* What() const;
 			CException& operator=(const CException& e);
 			
 		private:
-			LPTSTR	m_what;
+			_TCHAR*	m_what;
 	};
 	
 	/**
@@ -49,7 +46,7 @@ namespace Lib{
 	 *	@version	0.01
 	 *	@param	message	例外メッセージ
 	 */
-	inline CException::CException(LPCTSTR message){
+	inline CException::CException(const _TCHAR* message){
 		if(message != _T('\0'))
 			m_what=	_tcsdup(message);
 		else
@@ -96,7 +93,7 @@ namespace Lib{
 	 *	@version	0.01
 	 *	@return	例外を表す文字列
 	 */
-	inline LPCTSTR CException::What() const{
+	inline const _TCHAR* CException::What() const{
 		return m_what;
 	}
 	

@@ -74,6 +74,28 @@ namespace Complex{
 		}
 	}
 	
+	
+	/**
+	 *	2乗根の主値を求める.
+	 *
+	 *	@version	0.01
+	 *	@param	z	底
+	 *	@return	zの2乗根の主値
+	 */
+	CComplex const Root(CComplex const& z){
+		double abs, arg;
+		CComplex temp;
+		
+		abs= z.Abs();
+		arg= z.Arg();
+		
+		temp(
+			exp(log(abs) / 2.0) * cos(arg / 2.0), 
+			exp(log(abs) / 2.0) * sin(arg / 2.0));
+		
+		return temp;
+	}
+	
 	/**
 	 *	複素数のexp関数.
 	 *
@@ -135,6 +157,22 @@ namespace Complex{
 	}
 	
 	/**
+	 *	複素数の自然対数.
+	 *
+	 *	@version	0.01
+	 *	@param	z	複素数
+	 *	@return	主値
+	 */
+	CComplex const Log(CComplex const& z){
+		CComplex temp(
+			log(z.Abs()), 
+			z.Arg());
+		
+		return temp;
+	}
+	
+//	ここから下、定義を間違えて実装している。
+	/**
 	 *	複素数の逆正弦関数.
 	 *
 	 *	@version	0.01
@@ -142,9 +180,12 @@ namespace Complex{
 	 *	@return	逆正弦
 	 */
 	CComplex const ASin(CComplex const& z){
-		CComplex temp;
+		CComplex a, b, c, d, temp;
 		
-		temp= 1.0 / Sin(z);
+		b(0.0, 1.0);
+		c(1.0, 0.0);
+		
+		temp= Log(b * z - Root(c - Power(z, 2))) / b;
 		
 		return temp;
 	}

@@ -15,18 +15,20 @@ namespace Lib{
 	 */
 	class CXorShift{
 		public:
-			explicit CXorShift(unsigned int seed);
-			unsigned int Generate();
-			unsigned int Generate(unsigned int min, unsigned int max);
-			unsigned int Generate(unsigned int max);
-			unsigned int GenerateBit();
+			explicit CXorShift(unsigned __int32 seed);
+			unsigned __int32 Generate();
+			unsigned __int32 Generate(unsigned __int32 min, unsigned __int32 max);
+			unsigned __int32 Generate(unsigned __int32 max);
+			unsigned __int32 GenerateBit();
 			_TCHAR GenerateAlphabet();
 			
 			bool TestCXorShift();
 		
 		private:
-			unsigned int _x, _y, _z, _w;
-			
+			unsigned __int32 _x;
+			unsigned __int32 _y;
+			unsigned __int32 _z;
+			unsigned __int32 _w;
 	};
 	
 	/**
@@ -36,11 +38,11 @@ namespace Lib{
 	 *	@version	0.01
 	 *	@param	seed	乱数の種
 	 */
-	CXorShift::CXorShift(unsigned int seed= static_cast<unsigned int>(time(NULL))){
-		_x=	seed;
-		_y=	1234 * _x + 56789;
-		_z=	1234 * _y + 56789;
-		_w=	1234 * _z + 56789;
+	CXorShift::CXorShift(unsigned __int32 seed= static_cast<unsigned __int32>(time(NULL))){
+		_x= seed;
+		_y= 1234 * _x + 56789;
+		_z= 1234 * _y + 56789;
+		_w= 1234 * _z + 56789;
 	}
 	
 	/**
@@ -50,14 +52,14 @@ namespace Lib{
 	 *	@version	0.01
 	 *	@return	生成された乱数
 	 */
-	unsigned int CXorShift::Generate(){
-		unsigned int	t;
+	unsigned __int32 CXorShift::Generate(){
+		unsigned __int32 t;
 		
-		t=	_x ^ (_x << 11);
-		_x=	_y;
-		_y=	_z;
-		_z=	_w;
-		_w=	(_w ^ (_w >> 19)) ^ (t ^ (t >> 8));
+		t= _x ^ (_x << 15);
+		_x= _y;
+		_y= _z;
+		_z= _w;
+		_w= (_w ^ (_w >> 21)) ^ (t ^ (t >> 4));
 		
 		return _w;
 	}
@@ -71,16 +73,16 @@ namespace Lib{
 	 *	@param	max	生成される乱数の最大値
 	 *	@return	min以上max以下の、生成された乱数
 	 */
-	unsigned int CXorShift::Generate(unsigned int min, unsigned int max){
+	unsigned __int32 CXorShift::Generate(unsigned __int32 min, unsigned __int32 max){
 		if(min < 0 || max < 0)
 			throw CException(_T("最小値または最大値に負数が指定されました。"));
 		else if(min > max)
 			throw CException(_T("最小値よりも小さい最大値が指定されました。"));
 		
-		unsigned int tmp=	Generate();
+		unsigned __int32 tmp= Generate();
 		
-		tmp%=	(max - min) + 1;
-		tmp+=	min;
+		tmp%= (max - min) + 1;
+		tmp+= min;
 		
 		_ASSERT(tmp >= min && tmp <= max);
 		
@@ -95,13 +97,13 @@ namespace Lib{
 	 *	@param	max	生成される乱数の最大値
 	 *	@return	max以下の生成された乱数
 	 */
-	unsigned int CXorShift::Generate(unsigned int max){
+	unsigned __int32 CXorShift::Generate(unsigned __int32 max){
 		if(max < 0)
 			throw CException(_T("最大値に負数が指定されました。"));
 		
-		unsigned int tmp=	Generate();
+		unsigned __int32 tmp= Generate();
 		
-		tmp%=	max + 1;
+		tmp%= max + 1;
 		
 		_ASSERT(tmp <= max);
 		
@@ -115,7 +117,7 @@ namespace Lib{
 	 *	@version	0.01
 	 *	@return	生成されたビット
 	 */
-	unsigned int CXorShift::GenerateBit(){
+	unsigned __int32 CXorShift::GenerateBit(){
 		return Generate(1);
 	}
 	
@@ -150,9 +152,9 @@ namespace Lib{
 	 */
 	bool CXorShift::TestCXorShift(){
 		//	Generate(min, max)が正しく範囲内の数値を返すか
-		for(unsigned int min= 0, max= 10000; min != max; ++min, --max){
-			for(int count= 0; count < 1000; ++count){
-				unsigned int val=	Generate(min, max);
+		for(unsigned __int32 min= 0, max= 10000; min != max; ++min, --max){
+			for(__int32 count= 0; count < 1000; ++count){
+				unsigned __int32 val= Generate(min, max);
 				
 				if(val < min || val > max){
 					return false;

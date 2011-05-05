@@ -1,7 +1,8 @@
 #ifndef	XORSHIFT_H
 #define	XORSHIFT_H
 
-#include<time.h>
+#include <stdlib.h>
+#include <time.h>
 
 #ifdef	__cplusplus
 extern "C"{
@@ -12,28 +13,55 @@ typedef struct{
 	unsigned long y;
 	unsigned long z;
 	unsigned long w;
-}XorShift;
+}XorShift, *lpXorShift;
 
 //	プロトタイプ
-void xsInitialize(XorShift*);
-void xsInitializeWith(XorShift*, unsigned long);
-unsigned long xsGenerate(XorShift*);
+void XorShift_New(lpXorShift*);
+void XorShift_NewWith(lpXorShift*, unsigned long);
+void XorShift_Delete(lpXorShift*);
+unsigned long XorShift_Generate(lpXorShift);
 
 /**
  *	構造体初期化.
+ *
+ *	@param	lpxs	XorShift構造体へのポインタのポインタ
  */
-void xsInitialize(XorShift* lpxs){
-	xsInitializeWith(lpxs, (unsigned long)time(NULL));
+void XorShift_New(lpXorShift* lpxs){
+	XorShift_NewWith(lpxs, (unsigned long)time(NULL));
 }
 
-void xsInitializeWith(XorShift* lpxs, unsigned long s){
-	lpxs->x= s;
-	lpxs->y= (1234 * lpxs->x + 5678);
-	lpxs->z= (1234 * lpxs->y + 5678);
-	lpxs->w= (1334 * lpxs->z + 5678);
+/**
+ *	構造体初期化.
+ *
+ *	@param	lpxs	XorShift構造体へのポインタのポインタ
+ *	@param	s		乱数の種
+ */
+void XorShift_NewWith(lpXorShift* lpxs, unsigned long s){
+	*lpxs= (lpXorShift)calloc(1, sizeof(XorShift));
+	
+	(*lpxs)->x= s;
+	(*lpxs)->y= (1234 * (*lpxs)->x + 5678);
+	(*lpxs)->z= (1234 * (*lpxs)->y + 5678);
+	(*lpxs)->w= (1334 * (*lpxs)->z + 5678);
 }
 
-unsigned long xsGenerate(XorShift* lpxs){
+/**
+ *	構造体破棄.
+ *
+ *	@param	lpxs	XorShift構造体へのポインタのポインタ
+ */
+void XorShift_Delete(lpXorShift* lpxs){
+	free(*lpxs);
+	*lpxs= NULL;
+}
+
+/**
+ *	乱数生成.
+ *
+ *	@param	lpxs	XorShift構造体へのポインタ
+ *	@return	32bitの乱数
+ */
+unsigned long XorShift_Generate(lpXorShift lpxs){
 	unsigned long t;
 	
 	t= lpxs->x ^ (lpxs->x << 11);

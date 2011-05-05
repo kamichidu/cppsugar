@@ -11,7 +11,7 @@ namespace Lib{
 	 *	XorShiftによる乱数生成ジェネレータ.
 	 *
 	 *	@author	Chiduru
-	 *	@version	0.01
+	 *	@version	0.02
 	 */
 	class CXorShift{
 		public:
@@ -20,6 +20,7 @@ namespace Lib{
 			unsigned int Generate(unsigned int min, unsigned int max);
 			unsigned int Generate(unsigned int max);
 			unsigned int GenerateBit();
+			_TCHAR GenerateAlphabet();
 			
 			bool TestCXorShift();
 		
@@ -116,6 +117,28 @@ namespace Lib{
 	 */
 	unsigned int CXorShift::GenerateBit(){
 		return Generate(1);
+	}
+	
+	/**
+	 *	アルファベット生成.
+	 *
+	 *	@since	0.02
+	 *	@return	_TCHAR型のa-zA-z
+	 */
+	_TCHAR CXorShift::GenerateAlphabet(){
+		_TCHAR c;
+		__int32 offset;
+		
+		offset= Generate(0, 51);
+		
+		if(offset < 26)
+			c= _T('a') + offset;
+		else
+			c= _T('A') + offset - 26;
+		
+		_ASSERT((c >= _T('a') && c <= _T('z')) || (c >= _T('A') && c <= _T('Z')));
+		
+		return c;
 	}
 	
 	/**

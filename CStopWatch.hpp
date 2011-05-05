@@ -1,4 +1,4 @@
-#ifndef LIB_CSTOPWATCH_HPP
+ï»¿#ifndef LIB_CSTOPWATCH_HPP
 #define LIB_CSTOPWATCH_HPP
 
 #include <tchar.h>
@@ -8,10 +8,10 @@
 namespace Lib{
 
 	/**
-	 *	‚•ª‰ğ”\ƒpƒtƒH[ƒ}ƒ“ƒXƒJƒEƒ“ƒ^‚ğ—p‚¢‚½AŠÔŒv‘ª—pƒNƒ‰ƒX.
+	 *	é«˜åˆ†è§£èƒ½ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã‚«ã‚¦ãƒ³ã‚¿ã‚’ç”¨ã„ãŸã€æ™‚é–“è¨ˆæ¸¬ç”¨ã‚¯ãƒ©ã‚¹.
 	 *
-	 *	StopWatch.h ver0.2‚ğƒx[ƒX‚Éì‚Á‚Ä‚¢‚éB
-	 *	g—pŠÖ”‚Ì«”\ãAStopWatch::Precision()ˆÈã‚Ì¸“x‚Í•ÛØ‚³‚ê‚È‚¢B
+	 *	StopWatch.h ver0.2ã‚’ãƒ™ãƒ¼ã‚¹ã«ä½œã£ã¦ã„ã‚‹ã€‚
+	 *	ä½¿ç”¨é–¢æ•°ã®æ€§èƒ½ä¸Šã€StopWatch::Precision()ä»¥ä¸Šã®ç²¾åº¦ã¯ä¿è¨¼ã•ã‚Œãªã„ã€‚
 	 *
 	 *	@author	Chiduru
 	 *	@version	0.02
@@ -35,10 +35,10 @@ namespace Lib{
 	};
 	
 	/**
-	 *	ƒRƒ“ƒXƒgƒ‰ƒNƒ^.
+	 *	ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
 	 *
 	 *	@since	0.01
-	 *	@param	unit	g—p’PˆÊB1ms‚È‚ç1.0e-3A1us‚È‚ç1.0e-6A1ns‚È‚ç1.0e-9‚Æw’è‚·‚éB
+	 *	@param	unit	ä½¿ç”¨å˜ä½ã€‚1msãªã‚‰1.0e-3ã€1usãªã‚‰1.0e-6ã€1nsãªã‚‰1.0e-9ã¨æŒ‡å®šã™ã‚‹ã€‚
 	 */
 	CStopWatch::CStopWatch(double unit= 1.0e-3) : _unit(unit){
 		BOOL supported;
@@ -49,27 +49,27 @@ namespace Lib{
 			_stop_time= new LARGE_INTEGER;
 		}
 		catch(std::bad_alloc const&){
-			CException e(_T("ƒƒ‚ƒŠ‚ÌŠm•Û‚É¸”s‚µ‚Ü‚µ‚½B"));
+			CException e(_T("ãƒ¡ãƒ¢ãƒªã®ç¢ºä¿ã«å¤±æ•—ã—ã¾ã—ãŸã€‚"));
 			throw e;
 		}
 		
 		supported= QueryPerformanceFrequency(_freq);
 		
 		if(_unit <= 0){
-			CException e(_T("’PˆÊ‚É‚ÍA³‚ÌÀ”‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B"));
+			CException e(_T("å˜ä½ã«ã¯ã€æ­£ã®å®Ÿæ•°ã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚"));
 			throw e;
 		}
 		if(!supported){
-			CException e(_T("ƒGƒ‰[‚ª‹N‚«‚Ü‚µ‚½Bƒn[ƒhƒEƒFƒA‚ª‚•ª‰ğ”\ƒpƒtƒH[ƒ}ƒ“ƒXƒJƒEƒ“ƒ^‚ğƒTƒ|[ƒg‚µ‚Ä‚¢‚È‚¢‰Â”\«‚ª‚ ‚è‚Ü‚·B"));
+			CException e(_T("ã‚¨ãƒ©ãƒ¼ãŒèµ·ãã¾ã—ãŸã€‚ãƒãƒ¼ãƒ‰ã‚¦ã‚§ã‚¢ãŒé«˜åˆ†è§£èƒ½ãƒ‘ãƒ•ã‚©ãƒ¼ãƒãƒ³ã‚¹ã‚«ã‚¦ãƒ³ã‚¿ã‚’ã‚µãƒãƒ¼ãƒˆã—ã¦ã„ãªã„å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™ã€‚"));
 			throw e;
 		}
 	}
 	
 	/**
-	 *	ƒRƒs[ƒRƒ“ƒXƒgƒ‰ƒXƒ^.
+	 *	ã‚³ãƒ”ãƒ¼ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¹ã‚¿.
 	 *
 	 *	@since	0.01
-	 *	@param	obj	”íƒRƒs[ƒIƒuƒWƒFƒNƒg
+	 *	@param	obj	è¢«ã‚³ãƒ”ãƒ¼ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
 	 */
 	CStopWatch::CStopWatch(CStopWatch const& obj){
 		_unit= obj._unit;
@@ -80,7 +80,7 @@ namespace Lib{
 			_stop_time= new LARGE_INTEGER;
 		}
 		catch(std::bad_alloc const&){
-			CException e(_T("ƒƒ‚ƒŠ‚ÌŠm•Û‚É¸”s‚µ‚Ü‚µ‚½B"));
+			CException e(_T("ãƒ¡ãƒ¢ãƒªã®ç¢ºä¿ã«å¤±æ•—ã—ã¾ã—ãŸã€‚"));
 			throw e;
 		}
 		
@@ -90,7 +90,7 @@ namespace Lib{
 	}
 	
 	/**
-	 *	ƒfƒXƒgƒ‰ƒNƒ^.
+	 *	ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿.
 	 *
 	 *	@since	0.01
 	 */
@@ -107,7 +107,7 @@ namespace Lib{
 	}
 	
 	/**
-	 *	Œv‘ªŠJn.
+	 *	è¨ˆæ¸¬é–‹å§‹.
 	 *
 	 *	@since	0.01
 	 */
@@ -117,7 +117,7 @@ namespace Lib{
 	}
 	
 	/**
-	 *	Œv‘ª’â~.
+	 *	è¨ˆæ¸¬åœæ­¢.
 	 *
 	 *	@since	0.01
 	 */
@@ -127,10 +127,10 @@ namespace Lib{
 	}
 	
 	/**
-	 *	’¼‹ß‚ÌŒv‘ªŠÔ.
+	 *	ç›´è¿‘ã®è¨ˆæ¸¬æ™‚é–“.
 	 *
 	 *	@since	0.01
-	 *	@return	’¼‹ß‚ÌŒv‘ªŠÔ‚ğ•\‚·doubleŒ^‚Ì’l
+	 *	@return	ç›´è¿‘ã®è¨ˆæ¸¬æ™‚é–“ã‚’è¡¨ã™doubleå‹ã®å€¤
 	 */
 	inline
 	double CStopWatch::Time() const{
@@ -143,25 +143,25 @@ namespace Lib{
 	}
 	
 	/**
-	 *	Œv‘ª¸“x.
+	 *	è¨ˆæ¸¬ç²¾åº¦.
 	 *
-	 *	[1•b‚ ‚½‚è‚ÌŒo‰ßƒJƒEƒ“ƒg”]^-1‚Ì‚±‚ÆB
-	 *	1ƒJƒEƒ“ƒg‚ ‚½‚è‰½•b‚É‘Š“–‚·‚é‚©B
+	 *	[1ç§’ã‚ãŸã‚Šã®çµŒéã‚«ã‚¦ãƒ³ãƒˆæ•°]^-1ã®ã“ã¨ã€‚
+	 *	1ã‚«ã‚¦ãƒ³ãƒˆã‚ãŸã‚Šä½•ç§’ã«ç›¸å½“ã™ã‚‹ã‹ã€‚
 	 *
 	 *	@since	0.01
-	 *	@return	Œv‘ª¸“x
+	 *	@return	è¨ˆæ¸¬ç²¾åº¦
 	 */
 	double CStopWatch::Precision() const{
 		return 1.0 / (_freq->QuadPart * _unit);
 	}
 	
 	/**
-	 *	’PˆÊ.
+	 *	å˜ä½.
 	 *
-	 *	Time()‚Å•Ô‚³‚ê‚é’l‚ÌŒ…B
+	 *	Time()ã§è¿”ã•ã‚Œã‚‹å€¤ã®æ¡ã€‚
 	 *
 	 *	@since	0.02
-	 *	@return	’PˆÊ
+	 *	@return	å˜ä½
 	 */
 	double CStopWatch::Unit() const{
 		return _unit;

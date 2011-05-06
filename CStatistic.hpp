@@ -155,7 +155,7 @@ namespace Lib{
 	 *	@return	最頻値
 	 */
 	template<class Ttype>
-	Ttype CStatistic<Ttype>::GetMode() const{
+	Ttype const& CStatistic<Ttype>::GetMode() const{
 		return 0;
 	}
 	

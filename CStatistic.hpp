@@ -8,7 +8,7 @@ namespace Lib{
 	/**
 	 *	統計処理クラス.
 	 *
-	 *	@version	0.01
+	 *	@version	0.02
 	 *	@author	Chiduru
 	 */
 	template<class Ttype>
@@ -18,6 +18,7 @@ namespace Lib{
 			CStatistic(CStatistic const& obj);
 			~CStatistic();
 			
+			int GetDataNum() const;
 			Ttype const& GetMax() const;
 			Ttype const& GetMin() const;
 			double GetSum() const;
@@ -99,6 +100,17 @@ namespace Lib{
 	}
 	
 	/**
+	 *	登録されたデータの個数.
+	 *
+	 *	@since	0.02
+	 *	@return	統計データの個数
+	 */
+	template<class Ttype>
+	int CStatistic<Ttype>::GetDataNum() const{
+		return _size;
+	}
+	
+	/**
 	 *	統計データ中の最大値.
 	 *
 	 *	@since	0.01
@@ -152,16 +164,19 @@ namespace Lib{
 	/**
 	 *	最頻値を求める.
 	 *
+	 *	@since	0.02
 	 *	@return	最頻値
 	 */
 	template<class Ttype>
 	Ttype const& CStatistic<Ttype>::GetMode() const{
+		
 		return 0;
 	}
 	
 	/**
 	 *	中央値を求める.
 	 *
+	 *	@since	0.01
 	 *	@return	中央値
 	 */
 	template<class Ttype>

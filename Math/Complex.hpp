@@ -4,12 +4,123 @@
 #define	_USE_MATH_DEFINES
 
 #include <cmath>
-#include "CComplex.hpp"
+#include "Math/Complex/CComplex.hpp"
+#include "CException.hpp"
 
 namespace Lib{
 namespace Math{
 namespace Complex{
 
+	/**
+	 *	2次元離散空間フーリエ変換.
+	 *
+	 *	@version	0.01
+	 *	@param	dest	周波数成分
+	 *	@param	data	離散空間信号
+	 *	@param	width	幅
+	 *	@param	height	高さ
+	 */
+	void DoDSFT(CComplex dest[], CComplex const data[], int width, int height){
+		try{
+			//	引数チェック
+			if(dest == NULL || data == NULL || width <= 0 || height <= 0)
+				throw _T("不正な値が引数として渡されました。");
+			
+			//	DSFT実行
+			for(int f2= 0; f2 < height; ++f2){
+				for(int f1= 0; f1 < width; ++f1){
+					int dest_idx;
+					double W_C, H_C;
+					
+					dest_idx= f2 * width + f1;
+					
+					dest[dest_idx][Re]= dest[dest_idx][Im]= 0.;
+					
+					W_C= 2. * M_PI * static_cast<double>(f1) / static_cast<double>(width);
+					H_C= 2. * M_PI * static_cast<double>(f2) / static_cast<double>(height);
+					
+					for(int y= 0; y < height; ++y){
+						for(int x= 0; x < width; ++x){
+							int data_idx;
+							double theta;
+							
+							data_idx= y * width + x;
+							theta= W_C * x + H_C * y;
+							
+							dest[dest_idx][Re]+= data[data_idx][Re] * cos(theta);
+							dest[dest_idx][Im]-= data[data_idx][Re] * sin(theta);
+						}
+					}
+				}
+			}
+		}
+		catch(_TCHAR const* msg){
+			throw CException(msg);
+		}
+		catch(CException const& e){
+			throw e;
+		}
+		catch(...){
+			throw CException(_T("不明なエラーが発生しました。"));
+		}
+	}
+	
+	/**
+	 *	2次元離散空間逆フーリエ変換.
+	 *
+	 *	@version	0.01
+	 *	@param	dest	離散空間信号
+	 *	@param	data	周波数成分
+	 *	@param	width	幅
+	 *	@param	height	高さ
+	 */
+	void DoIDSFT(CComplex dest[], CComplex const data[], int width, int height){
+		try{
+			throw CException(_T("未実装"));
+		}
+		catch(CException const& e){
+			throw e;
+		}
+		catch(...){
+			throw CException(_T("不明なエラーが発生しました。"));
+		}
+	}
+	
+	/**
+	 *	1次元離散時間フーリエ変換.
+	 *
+	 *	@version	0.01
+	 *	@param	dest	周波数成分
+	 *	@param	data	信号値
+	 *	@param	n		サンプル点の個数
+	 */
+	void DoDFT(CComplex dest[], CComplex const data[], int n){
+		try{
+			//	引数チェック
+			if(dest == NULL || data == NULL || n <= 0)
+				throw _T("不正な値が引数として渡されました。");
+			
+			//	DFT実行
+			for(int f= 0; f < n; ++f){
+				dest[f][Re]= dest[f][Im]= 0.;
+				
+				for(int t= 0; t < n; ++t){
+					dest[f][Re]+= data[t][Re] * cos(2. * M_PI * f * t / n);
+					dest[f][Im]-= data[t][Im] * sin(2. * M_PI * f * t / n);
+				}
+			}
+		}
+		catch(_TCHAR const* msg){
+			throw CException(msg);
+		}
+		catch(CException const& e){
+			throw e;
+		}
+		catch(...){
+			throw CException(_T("不明なエラーが発生しました。"));
+		}
+	}
+	
 	/**
 	 *	n乗を求める.
 	 *

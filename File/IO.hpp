@@ -55,16 +55,13 @@ namespace IO{
 			}
 		}
 		catch(_TCHAR const* mes){
-			Lib::CException e(mes);
-			throw e;
+			throw Lib::CException(mes);
 		}
 		catch(std::bad_alloc&){
-			Lib::CException e(_T("領域が確保できませんでした。"));
-			throw e;
+			throw Lib::CException(_T("領域が確保できませんでした。"));
 		}
 		catch(...){
-			Lib::CException e(_T("不明なエラーが発生しました。"));
-			throw e;
+			throw Lib::CException(_T("不明なエラーが発生しました。"));
 		}
 		
 		return str;

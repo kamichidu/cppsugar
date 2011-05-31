@@ -44,15 +44,14 @@ namespace Optimization{
 	class CSA{
 		public:
 			explicit CSA(std::vector<Ttype> const& initial_solution, double initial_temperature, double freeze_temperature);
-			std::vector<Ttype> const& Optimize();
+			std::vector<Ttype> const Optimize();
 		protected:
 			virtual Ttype const ObjectiveFunction(std::vector<Ttype> const& vars) const;
-			virtual double UpdateTemperature(double t) const;
+			virtual double UpdateTemperature(double now_temperature) const;
 			virtual std::vector<Ttype> const GenerateNeighbor(std::vector<Ttype> const& basis) const;
 			virtual bool CheckConstraint(std::vector<Ttype> const& neighbor) const;
 		private:
 			std::vector<Ttype> _initial_solution;
-			std::vector<Ttype> _optimal_solution;
 			double _initial_temperature;
 			double _freeze_temperature;
 			Lib::CXorShift _random;
@@ -131,7 +130,7 @@ namespace Optimization{
 	 *	@return	求めた最適解
 	 */
 	template<class Ttype>
-	std::vector<Ttype> const& CSA<Ttype>::Optimize(){
+	std::vector<Ttype> const CSA<Ttype>::Optimize(){
 		double temperature;
 		std::vector<Ttype> solution;
 		
@@ -170,10 +169,7 @@ namespace Optimization{
 			temperature= UpdateTemperature(temperature);
 		}
 		
-		//	最適解の保存
-		_optimal_solution= solution;
-		
-		return _optimal_solution;
+		return solution;
 	}
 
 }

@@ -6,23 +6,25 @@
 #include	<crtdbg.h>
 #include	"CException.hpp"
 
-namespace Lib{
+namespace lib{
 	/**
 	 *	XorShiftによる乱数生成ジェネレータ.
+	 *
+	 *	TODO ほぼフルスクラッチ
 	 *
 	 *	@author	Chiduru
 	 *	@version	0.02
 	 */
-	class CXorShift{
+	class xorshift{
 		public:
-			explicit CXorShift(unsigned __int32 seed);
+			explicit xorshift(unsigned __int32 seed);
 			unsigned __int32 Generate();
 			unsigned __int32 Generate(unsigned __int32 min, unsigned __int32 max);
 			unsigned __int32 Generate(unsigned __int32 max);
 			unsigned __int32 GenerateBit();
 			_TCHAR GenerateAlphabet();
 			
-			bool TestCXorShift();
+			bool testxorshift();
 		
 		private:
 			unsigned __int32 _x;
@@ -38,7 +40,7 @@ namespace Lib{
 	 *	@version	0.01
 	 *	@param	seed	乱数の種
 	 */
-	CXorShift::CXorShift(unsigned __int32 seed= static_cast<unsigned __int32>(time(NULL))){
+	xorshift::xorshift(unsigned __int32 seed= static_cast<unsigned __int32>(time(NULL))){
 		_x= seed;
 		_y= 1234 * _x + 56789;
 		_z= 1234 * _y + 56789;
@@ -52,7 +54,7 @@ namespace Lib{
 	 *	@version	0.01
 	 *	@return	生成された乱数
 	 */
-	unsigned __int32 CXorShift::Generate(){
+	unsigned __int32 xorshift::Generate(){
 		unsigned __int32 t;
 		
 		t= _x ^ (_x << 15);
@@ -73,7 +75,7 @@ namespace Lib{
 	 *	@param	max	生成される乱数の最大値
 	 *	@return	min以上max以下の、生成された乱数
 	 */
-	unsigned __int32 CXorShift::Generate(unsigned __int32 min, unsigned __int32 max){
+	unsigned __int32 xorshift::Generate(unsigned __int32 min, unsigned __int32 max){
 		if(min < 0 || max < 0)
 			throw CException(_T("最小値または最大値に負数が指定されました。"));
 		else if(min > max)
@@ -97,7 +99,7 @@ namespace Lib{
 	 *	@param	max	生成される乱数の最大値
 	 *	@return	max以下の生成された乱数
 	 */
-	unsigned __int32 CXorShift::Generate(unsigned __int32 max){
+	unsigned __int32 xorshift::Generate(unsigned __int32 max){
 		if(max < 0)
 			throw CException(_T("最大値に負数が指定されました。"));
 		
@@ -117,7 +119,7 @@ namespace Lib{
 	 *	@version	0.01
 	 *	@return	生成されたビット
 	 */
-	unsigned __int32 CXorShift::GenerateBit(){
+	unsigned __int32 xorshift::GenerateBit(){
 		return Generate(1);
 	}
 	
@@ -127,7 +129,7 @@ namespace Lib{
 	 *	@since	0.02
 	 *	@return	_TCHAR型のa-zA-z
 	 */
-	_TCHAR CXorShift::GenerateAlphabet(){
+	_TCHAR xorshift::GenerateAlphabet(){
 		_TCHAR c;
 		__int32 offset;
 		
@@ -144,13 +146,13 @@ namespace Lib{
 	}
 	
 	/**
-	 *	CXorShiftクラスのテストコード.
+	 *	xorshiftクラスのテストコード.
 	 *
 	 *	@since	0.01
 	 *	@version	0.01
 	 *	@return	テストをパスすればtrue、しなければfalse
 	 */
-	bool CXorShift::TestCXorShift(){
+	bool xorshift::testxorshift(){
 		//	Generate(min, max)が正しく範囲内の数値を返すか
 		for(unsigned __int32 min= 0, max= 10000; min != max; ++min, --max){
 			for(__int32 count= 0; count < 1000; ++count){

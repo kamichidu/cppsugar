@@ -1,34 +1,33 @@
-﻿#ifndef	LIB_CSTATISTIC_HPP
-#define	LIB_CSTATISTIC_HPP
+﻿#ifndef	LIB_CSTATISTIC_HPP_
+#define	LIB_CSTATISTIC_HPP_
 
-#include <stdio.h>
-#include <math.h>
+#include <cmath>
 
-namespace Lib{
+namespace lib{
 	/**
 	 *	統計処理クラス.
 	 *
-	 *	@version	0.02
-	 *	@author	Chiduru
+	 *	@version 2012-05-20 (日)
+	 *	@author  kamichidu
 	 */
 	template<class Ttype>
-	class CStatistic{
+	class statistic{
 		public:
-			explicit CStatistic(Ttype const* data, int n);
-			CStatistic(CStatistic const& obj);
-			~CStatistic();
-			
-			int GetDataNum() const;
-			Ttype const& GetMax() const;
-			Ttype const& GetMin() const;
-			double GetSum() const;
-			double GetAverage() const;
-			Ttype const& GetMode() const;
-			double GetMedian() const;
-			double GetVariance() const;
-			double GetStandardDeviation() const;
-		
-		protected:
+			statistic(Ttype const* data, int n);
+			explicit statistic(statistic const& obj);
+			~statistic();
+		public:
+			int size() const;
+			Ttype const& max() const;
+			Ttype const& min() const;
+			double sum() const;
+			double mean() const;
+			Ttype const& mode() const;
+			double median() const;
+			double variance() const;
+			double standard_deviation() const;
+		private:
+			// TODO: データの持ち方をc++ライクに変更
 			Ttype* _data;
 			int _size;
 	};
@@ -43,7 +42,7 @@ namespace Lib{
 	 *	@param	n		統計データの個数
 	 */
 	template<class Ttype>
-	CStatistic<Ttype>::CStatistic(Ttype const* data, int n) : _size(n){
+	statistic<Ttype>::statistic(Ttype const* data, int n) : _size(n){
 		_data= new Ttype[_size];
 		
 		for(int i= 0; i < _size; ++i)
@@ -69,7 +68,7 @@ namespace Lib{
 	 *	@param	obj	被コピー対象のオブジェクト
 	 */
 	template<class Ttype>
-	CStatistic<Ttype>::CStatistic(CStatistic const& obj) : _size(obj._size){
+	statistic<Ttype>::statistic(statistic const& obj) : _size(obj._size){
 		_data= new Ttype[_size];
 		
 		for(int i= 0; i < _size; ++i)
@@ -94,9 +93,9 @@ namespace Lib{
 	 *	@since	0.01
 	 */
 	template<class Ttype>
-	CStatistic<Ttype>::~CStatistic(){
+	statistic<Ttype>::~statistic(){
 		delete [] _data;
-		_data= NULL;
+		_data= nullptr;
 	}
 	
 	/**
@@ -106,7 +105,7 @@ namespace Lib{
 	 *	@return	統計データの個数
 	 */
 	template<class Ttype>
-	int CStatistic<Ttype>::GetDataNum() const{
+	int statistic<Ttype>::size() const{
 		return _size;
 	}
 	
@@ -117,7 +116,7 @@ namespace Lib{
 	 *	@return	最大値
 	 */
 	template<class Ttype>
-	Ttype const& CStatistic<Ttype>::GetMax() const{
+	Ttype const& statistic<Ttype>::max() const{
 		return _data[_size - 1];
 	}
 	
@@ -128,7 +127,7 @@ namespace Lib{
 	 *	@return	最小値
 	 */
 	template<class Ttype>
-	Ttype const& CStatistic<Ttype>::GetMin() const{
+	Ttype const& statistic<Ttype>::min() const{
 		return _data[0];
 	}
 	
@@ -139,7 +138,7 @@ namespace Lib{
 	 *	@return	合計
 	 */
 	template<class Ttype>
-	double CStatistic<Ttype>::GetSum() const{
+	double statistic<Ttype>::sum() const{
 		double sum;
 		
 		sum= 0.0;
@@ -157,8 +156,8 @@ namespace Lib{
 	 *	@return	平均
 	 */
 	template<class Ttype>
-	double CStatistic<Ttype>::GetAverage() const{
-		return GetSum() / _size;
+	double statistic<Ttype>::mean() const{
+		return sum() / _size;
 	}
 	
 	/**
@@ -168,7 +167,7 @@ namespace Lib{
 	 *	@return	最頻値
 	 */
 	template<class Ttype>
-	Ttype const& CStatistic<Ttype>::GetMode() const{
+	Ttype const& statistic<Ttype>::mode() const{
 		
 		return 0;
 	}
@@ -180,7 +179,7 @@ namespace Lib{
 	 *	@return	中央値
 	 */
 	template<class Ttype>
-	double CStatistic<Ttype>::GetMedian() const{
+	double statistic<Ttype>::median() const{
 		//	奇数の場合
 		if(_size % 2){
 			return _data[_size / 2];
@@ -201,10 +200,10 @@ namespace Lib{
 	 *	@return	分散
 	 */
 	template<class Ttype>
-	double CStatistic<Ttype>::GetVariance() const{
+	double statistic<Ttype>::variance() const{
 		double average, variance;
 		
-		average= GetAverage();
+		average= mean();
 		
 		variance= 0.0;
 		for(int i= 0; i < _size; ++i){
@@ -222,9 +221,10 @@ namespace Lib{
 	 *	@return	標準偏差
 	 */
 	template<class Ttype>
-	double CStatistic<Ttype>::GetStandardDeviation() const{
-		return sqrt(GetVariance());
+	double statistic<Ttype>::standard_deviation() const{
+		return sqrt(variance());
 	}
 }
 
-#endif	//	LIB_CSTATISTIC_HPP
+#endif	//	LIB_CSTATISTIC_HPP_
+

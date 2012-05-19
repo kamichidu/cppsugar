@@ -1,5 +1,5 @@
-﻿#ifndef	LIB_CHASH_HPP
-#define	LIB_CHASH_HPP
+﻿#ifndef	LIB_CHASH_HPP_
+#define	LIB_CHASH_HPP_
 
 #include	<tchar.h>
 #include	<crtdbg.h>
@@ -19,16 +19,6 @@ namespace Lib{
 	template<class Ttype>
 	class CHash{
 		private:
-			typedef	_TCHAR*			LPTSTR;
-			typedef	const _TCHAR*	LPCTSTR;
-			typedef	int				INT32;
-			typedef	long long		INT64;
-			
-			/**
-			 *	単方向リスト.
-			 *
-			 *	@since	0.02
-			 */
 			struct CELL{
 				LPTSTR	key;
 				Ttype	value;
@@ -287,4 +277,5 @@ namespace Lib{
 	}
 }
 
-#endif	//	LIB_CHASH_HPP
+#endif	//	LIB_CHASH_HPP_
+

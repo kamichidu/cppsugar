@@ -5,100 +5,99 @@
 #include <wchar.h>
 
 namespace lib{
-	/**
-	 *	_TCHARで文字列を扱う基底例外クラス。.
-	 *
-	 *	課題
-	 *	_tcsdup()がNULLを返したときの処理をどうするか。
-	 * 
-	 *	@author	 kamichidu
-	 *	@version 2012-05-20 (日)
-	 */
-	class exception{
-		public:
-			exception();
-			explicit exception(std::wstring const& what);
-			explicit exception(exception const& obj);
-			~exception();
-		public:
-			const wchar_t* what() const;
-		public:
-			exception& operator = (exception const& obj);
-		private:
-			std::wstring _what;
-	};
-	
-	/**
-	 *	デフォルトコンストラクタ。.
-	 *
-	 *	@since	0.01
-	 *	@version	0.01
-	 */
-	inline
-	exception::exception(){
-		_what= L"unknonw exception.";
-	}
-	
-	/**
-	 *	引数つきコンストラクタ。.
-	 *
-	 *	@since	0.01
-	 *	@version	0.01
-	 *	@param	exception	被コピー例外クラス
-	 */
-	inline
-	exception::exception(exception const& obj){
+namespace exception{
+
+/**
+ * 汎用例外クラス<br>
+ *
+ * @author  kamichidu
+ * @version 2012-05-20 (日)
+ * @param <CharT> 使用する文字型
+ */
+template<class CharT= wchar_t>
+class exception{
+	public:
+		exception();
+		explicit exception(std::basic_string<CharT> const& what);
+		explicit exception(exception<CharT> const& obj);
+		virtual ~exception();
+	public:
+		std::basic_string<CharT> const& what() const;
+	public:
+		exception& operator = (exception<CharT> const& obj);
+	private:
+		std::basic_string<CharT> _what;
+};
+
+/**
+ *
+ * @since 2012-05-20 (日)
+ */
+template<class CharT>
+inline
+exception<CharT>::exception(){
+}
+
+/**
+ *
+ * @since 2012-05-20 (日)
+ * @param obj コピーする例外オブジェクト
+ */
+template<class CharT>
+inline
+exception<CharT>::exception(exception<CharT> const& obj){
+	_what= obj._what;
+}
+
+/**
+ *
+ * @since 2012-05-20 (日)
+ * @param what 例外メッセージ
+ */
+template<class CharT>
+inline
+exception<CharT>::exception(std::basic_string<CharT> const& what){
+	_what= what;
+}
+
+/**
+ *
+ * @since 2012-05-20 (日)
+ */
+template<class CharT>
+inline
+exception<CharT>::~exception(){
+}
+
+/**
+ *
+ * @since 2012-05-20 (日)
+ * @return
+ *     例外メッセージ
+ */
+template<class CharT>
+inline
+std::basic_string<CharT> const& exception<CharT>::what() const{
+	return _what;
+}
+
+/**
+ * 代入を行う。<br>
+ *
+ * @since 2012-05-20 (日)
+ * @param obj 代入するオブジェクト
+ * @return 
+ *     被代入オブジェクト
+ */
+template<class CharT>
+inline
+exception<CharT>& exception<CharT>::operator = (exception<CharT> const& obj){
+	if(this != &obj)
 		_what= obj._what;
-	}
-	
-	/**
-	 *	引数つきコンストラクタ.
-	 *
-	 *	@since	0.02
-	 *	@version	0.01
-	 *	@param	s	例外メッセージ
-	 */
-	inline
-	exception::exception(std::wstring const& what){
-		_what= what;
-	}
-	
-	/**
-	 *	デストラクタ。.
-	 *
-	 *	@since	0.01
-	 *	@version	0.01
-	 */
-	inline
-	exception::~exception(){
-		_what= L"";
-	}
-	
-	/**
-	 *	例外メッセージを返す。.
-	 *
-	 *	@since	0.01
-	 *	@version	0.01
-	 *	@return	例外を表す文字列
-	 */
-	inline
-	wchar_t const* exception::what() const{
-		return _what.c_str();
-	}
-	
-	/**
-	 *	=演算子オーバーロード。.
-	 *
-	 *	@since  2012-05-20 (日)
-	 *	@param  e コピーする例外クラス
-	 *	@return *this
-	 */
-	inline
-	exception& exception::operator = (exception const& obj){
-		if(this != &obj)
-			_what= obj._what;
-		return *this;
-	}
+	return *this;
+}
+
+}
 }
 
 #endif	//	LIB_EXCEPTION_EXCEPTION_HPP_

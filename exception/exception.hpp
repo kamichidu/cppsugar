@@ -1,5 +1,5 @@
-﻿#ifndef	LIB_CEXCEPTION_HPP_
-#define	LIB_CEXCEPTION_HPP_
+#ifndef	LIB_EXCEPTION_EXCEPTION_HPP_
+#define	LIB_EXCEPTION_EXCEPTION_HPP_
 
 #include <string>
 #include <wchar.h>
@@ -101,5 +101,5 @@ namespace lib{
 	}
 }
 
-#endif	//	LIB_CEXCEPTION_HPP_
+#endif	//	LIB_EXCEPTION_EXCEPTION_HPP_
 

@@ -12,9 +12,11 @@ namespace io{
 /**
  * perlのslurp関数と同様の機能を提供する関数。<br>
  * 
- * @param  file_path データを読み込むファイルパス
- * @param  <CharT>   文字型
- * @return ファイルの内容がすべて読み込まれたstd::basic_string<CharT>
+ * @version 2012-05-20 (日)
+ * @param   file_path データを読み込むファイルパス
+ * @param   <CharT>   文字型
+ * @return 
+ *     ファイルの内容がすべて読み込まれたstd::basic_string<CharT>
  */
 template<class CharT= wchar_t>
 std::basic_string<CharT> slurp(std::string const& file_path){

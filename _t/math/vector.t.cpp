@@ -2,6 +2,10 @@
 
 using namespace lib::math;
 
+vector<3> create(){
+	return vector<3>();
+}
+
 int main(int argc, char* argv[]){
 	vector<3> v0, v1;
 
@@ -10,7 +14,11 @@ int main(int argc, char* argv[]){
 
 	auto const v2= v0 + v1;
 	auto const v3= v0 - v1;
-	auto const v4= v0.dot_product(v1);
+	auto const d0= v0.dot_product(v1);
+
+	auto const v5= create();
+
+	auto const v6= vector<3>(v5);
 
 	return 0;
 }

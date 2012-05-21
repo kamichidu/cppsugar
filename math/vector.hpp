@@ -41,14 +41,14 @@ class vector{
 template<int N, class Elm>
 inline
 vector<N, Elm>::vector(){
-	_vec= new std::vector<Elm>(N);
+	_vec= std::unique_ptr<std::vector<Elm>>(new std::vector<Elm>(N));
 }
 
 template<int N, class Elm>
 template<class InputIterator>
 inline
 vector<N, Elm>::vector(InputIterator first, InputIterator last){
-	_vec= new std::vector<Elm>(first, last);
+	_vec= std::unique_ptr<std::vector<Elm>>(new std::vector<Elm>(first, last));
 }
 
 template<int N, class Elm>
@@ -106,13 +106,13 @@ Elm& vector<N, Elm>::operator [] (int i){
 template<int N, class Elm>
 inline
 vector<N, Elm>::vector(vector<N, Elm> const& obj){
-	_vec= new std::vector<Elm>(obj._vec->begin(), obj._vec->end());
+	_vec= std::unique_ptr<std::vector<Elm>>(new std::vector<Elm>(obj._vec->begin(), obj._vec->end()));
 }
 
 template<int N, class Elm>
 inline
 vector<N, Elm>& vector<N, Elm>::operator = (vector<N, Elm> const& r){
-	_vec= new std::vector<Elm>(r._vec->begin(), r._vec->end());
+	_vec= std::unique_ptr<std::vector<Elm>>(new std::vector<Elm>(r._vec->begin(), r._vec->end()));
 }
 
 template<int N, class Elm>
@@ -125,6 +125,8 @@ template<int N, class Elm>
 inline
 vector<N, Elm>& vector<N, Elm>::operator = (vector<N, Elm>&& r){
 	_vec= std::move(r._vec);
+
+	return *this;
 }
 
 }

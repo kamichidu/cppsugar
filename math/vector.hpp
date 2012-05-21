@@ -19,6 +19,7 @@ template<int N, class Elm= double>
 class vector{
 	public:
 		vector();
+		vector(std::initializer_list<Elm> vec);
 		template<class InputIterator>
 			vector(InputIterator first, InputIterator last);
 		~vector();
@@ -42,6 +43,12 @@ template<int N, class Elm>
 inline
 vector<N, Elm>::vector(){
 	_vec= std::unique_ptr<std::vector<Elm>>(new std::vector<Elm>(N));
+}
+
+template<int N, class Elm>
+inline
+vector<N, Elm>::vector(std::initializer_list<Elm> vec){
+	_vec= std::unique_ptr<std::vector<Elm>>(new std::vector<Elm>(vec.begin(), vec.end()));
 }
 
 template<int N, class Elm>

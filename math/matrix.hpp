@@ -19,6 +19,9 @@ namespace math{
 template<int N, int M, class Elm= double>
 class matrix{
 	public:
+		matrix();
+		~matrix();
+	public:
 		matrix<N, M, Elm> const operator + (matrix<N, M, Elm> const& r) const;
 		matrix<N, M, Elm> const operator - (matrix<N, M, Elm> const& r) const;
 		template<int O>
@@ -37,8 +40,50 @@ class matrix{
 
 template<int N, int M, class Elm>
 inline
+matrix<N, M, Elm>::matrix(){
+	_mat= std::unique_ptr<vector<N, vector<M, Elm>>>(new vector<N, vector<M, Elm>>());
+}
+
+template<int N, int M, class Elm>
+inline
+matrix<N, M, Elm>::~matrix(){
+	_mat= std::unique_ptr<vector<N, vector<M, Elm>>>();
+}
+
+template<int N, int M, class Elm>
+inline
 matrix<N, M, Elm> const matrix<N, M, Elm>::operator + (matrix<N, M, Elm> const& r) const{
-	
+	matrix<N, M, Elm> buf;
+
+	for(int i= 0; i < N; ++i)
+		for(int j= 0; j < M; ++j)
+			buf[i][j]= (*this)[i][j] + r[i][j];
+
+	return buf;
+}
+
+template<int N, int M, class Elm>
+inline
+matrix<N, M, Elm> const matrix<N, M, Elm>::operator - (matrix<N, M, Elm> const& r) const{
+	matrix<N, M, Elm> buf(*this);
+
+	for(int i= 0; i < N; ++i)
+		for(int j= 0; j < M; ++j)
+			buf[i][j]-= r[i][j];
+
+	return buf;
+}
+
+template<int N, int M, class Elm>
+inline
+vector<M> const& matrix<N, M, Elm>::operator [] (int row) const{
+	return _mat->operator [] (row);
+}
+
+template<int N, int M, class Elm>
+inline
+vector<M>& matrix<N, M, Elm>::operator [] (int row){
+	return _mat->operator [] (row);
 }
 
 }

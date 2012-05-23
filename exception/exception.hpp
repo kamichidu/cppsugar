@@ -22,7 +22,7 @@ class exception{
 		explicit exception(exception<CharT> const& obj);
 		virtual ~exception();
 	public:
-		std::basic_string<CharT> const& what() const;
+		virtual std::basic_string<CharT> const& what() const;
 	public:
 		exception& operator = (exception<CharT> const& obj);
 	private:

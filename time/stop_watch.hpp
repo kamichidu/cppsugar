@@ -2,6 +2,7 @@
 #define LIB_CSTOPWATCH_HPP_
 
 namespace lib{
+namespace time{
 
 /**
  *	高分解能パフォーマンスカウンタを用いた、時間計測用クラス.
@@ -175,6 +176,7 @@ double stop_watch::unit() const{
 	return _unit;
 }
 
+}
 }
 
 #endif
